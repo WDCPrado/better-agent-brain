@@ -247,10 +247,15 @@ exista en la máquina:
    del vault. Verifica tres cosas: que toda nota sea alcanzable desde `MEMORY.md` siguiendo
    enlaces, que ningún nombre esté repetido, y qué enlaces quedan pendientes de escribir.
 
-2. **El hook.** Copia `aviso.sh` al vault y regístralo como hook `UserPromptSubmit` —en
-   `settings.json` para Claude Code, en `hooks.json` para Codex—. Avisa cuando pasan muchos
-   mensajes sin que el vault cambie. **Va en la configuración de la máquina, no en un repo de
-   configuración versionado**, porque lleva una ruta local.
+2. **El hook.** Copia `aviso.sh` al vault y regístralo como hook `UserPromptSubmit` en el
+   `settings.json` de Claude Code. Avisa cuando pasan muchos mensajes sin que el vault cambie.
+   **Va en la configuración de la máquina, no en un repo de configuración versionado**, porque
+   lleva una ruta local.
+
+   En Codex, **comprueba antes que su `hooks.json` acepte el evento** en vez de asumirlo: al
+   3 de septiembre de 2026 su CLI no documenta los hooks y los que trae de fábrica son
+   `PostToolUse` y `Stop`. Si no puedes confirmarlo, deja Codex sin hook y dilo: la regla del
+   punto 3 es lo que hace falta para que lea la memoria; el hook solo recuerda escribirla.
 
 3. **La regla en el archivo del agente.** Sin esto, ninguna sesión sabe que el cerebro existe.
    Usa `plantillas/reglas.md` y escríbela en `~/.claude/CLAUDE.md`, en `~/.codex/AGENTS.md`, o
