@@ -52,9 +52,10 @@ Para encontrar el vault de esta máquina, en este orden y parando en el primero 
    ```
    Extrae **rutas**, no menciones: esos archivos hablan de `MEMORY.md` en varias líneas y solo
    una es el puntero. Si sale una sola ruta, ese es el vault. Si salen dos distintas, para y
-   pregunta: la memoria está partida en dos y hay que decidir cuál queda. **Ese es el puntero oficial y no hay otro:** no
-   inventes un archivo de configuración aparte, porque un segundo puntero es un segundo lugar
-   donde equivocarse.
+   pregunta: la memoria está partida en dos y hay que decidir cuál queda.
+
+   **Ese puntero es el único que hay:** no inventes un archivo de configuración aparte, porque
+   un segundo puntero es un segundo lugar donde equivocarse.
 2. Si no está, pregunta dónde va el vault y propón `~/brain`.
 
 Si la persona ya tenía un cerebro y el puntero no existe, pídele la ruta antes de crear nada:
