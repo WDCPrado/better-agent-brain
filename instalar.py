@@ -15,8 +15,8 @@ import shutil
 import sys
 
 REPO = pathlib.Path(__file__).resolve().parent
-ORIGEN = REPO / "skills" / "init-brain"
-PLANTILLAS = REPO / "plantillas"
+ORIGEN = REPO / "skills" / "init-brain"   # las plantillas viven dentro, así los dos
+                                          # modos dejan exactamente la misma estructura
 
 AGENTES = [("Claude Code", ".claude"), ("Codex", ".codex")]
 
@@ -37,7 +37,6 @@ def instalar(base: pathlib.Path, enlazar: bool) -> str:
             pass  # Windows sin modo desarrollador: se copia y se avisa
 
     shutil.copytree(ORIGEN, destino)
-    shutil.copytree(PLANTILLAS, destino / "plantillas")
     return "copiado"
 
 
