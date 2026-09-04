@@ -23,8 +23,14 @@ Este sistema no es de una herramienta en particular. Instala en la que exista:
 | Skills | `~/.claude/skills/` | `~/.codex/skills/` |
 | Hooks | `settings.json` | `hooks.json` |
 
-Si están los dos, configura los dos y **apunta ambos al mismo vault**. Dos cerebros para una
-persona es el peor resultado posible: cada sesión escribiría en la mitad que el otro no lee.
+Si están los dos, lo ideal es que **ambos apunten al mismo vault**: dos cerebros para una
+persona es el peor resultado posible, porque cada sesión escribiría en la mitad que el otro no lee.
+
+Pero **configura sin preguntar solo el agente desde el que te invocaron**. Para cualquier otro,
+enseña lo que cambiarías y espera el sí: quien corre el comando en una herramienta no está
+pidiendo que le toques la configuración de otra. La regla vale doble si el archivo resulta venir
+de un repo espejo —ahí el cambio no es local, se commitea y se publica—, y esos repos aparecen
+recién al buscarlos, así que quien invocó el comando puede no saber que existen.
 
 ---
 
