@@ -13,9 +13,11 @@ El resultado es un vault que se lee solo desde su índice, un `check.sh` que avi
 pudre, un hook que recuerda escribirlo y una regla en el archivo del agente para que todas las
 sesiones lo usen.
 
-## Los dos agentes
+## Un agente por vez: el que te invocó
 
-Este sistema no es de una herramienta en particular. Instala en la que exista:
+Este sistema no es de una herramienta en particular, pero **configura únicamente el agente desde
+el que te están corriendo**. Nunca toques la configuración de otro, ni siquiera para preguntar
+si conviene: quien corre el comando en una herramienta no está pidiendo nada sobre las demás.
 
 | | Claude Code | Codex |
 |---|---|---|
@@ -23,14 +25,16 @@ Este sistema no es de una herramienta en particular. Instala en la que exista:
 | Skills | `~/.claude/skills/` | `~/.codex/skills/` |
 | Hooks | `settings.json` | `hooks.json` |
 
-Si están los dos, lo ideal es que **ambos apunten al mismo vault**: dos cerebros para una
-persona es el peor resultado posible, porque cada sesión escribiría en la mitad que el otro no lee.
+La razón es que el archivo de reglas de otro agente puede venir de un **repo espejo**: entonces
+el cambio no es local, hay que commitearlo y publicarlo, y esos repos aparecen recién al
+buscarlos —quien te invocó puede ni saber que existen—. Publicar en un repo ajeno a lo que te
+pidieron es exactamente lo que este comando no debe hacer.
 
-Pero **configura sin preguntar solo el agente desde el que te invocaron**. Para cualquier otro,
-enseña lo que cambiarías y espera el sí: quien corre el comando en una herramienta no está
-pidiendo que le toques la configuración de otra. La regla vale doble si el archivo resulta venir
-de un repo espejo —ahí el cambio no es local, se commitea y se publica—, y esos repos aparecen
-recién al buscarlos, así que quien invocó el comando puede no saber que existen.
+**Compartir el vault entre agentes es deseable** —dos cerebros para una persona es el peor
+resultado, porque cada sesión escribiría en la mitad que la otra no lee—, pero se consigue de la
+forma obvia: corriendo `/init-brain` desde el otro agente, que encontrará el vault existente por
+el mismo paso 0 y se conectará solo. Al cerrar puedes mencionarlo en una línea, como sugerencia
+y nada más.
 
 ---
 
@@ -246,8 +250,8 @@ si el conteo de alcanzables bajó, rompiste un enlace.
 
 ## Paso 6 — Dejar el sistema andando
 
-Un vault que nadie lee ni escribe no es memoria. Instala las tres piezas, en cada agente que
-exista en la máquina:
+Un vault que nadie lee ni escribe no es memoria. Instala las tres piezas **en el agente que te
+invocó**, y solo en ese:
 
 1. **Las carpetas y el `check.sh`.** Copia `check.py` y `check.sh` de `plantillas/` a la raíz
    del vault. Verifica tres cosas: que toda nota sea alcanzable desde `MEMORY.md` siguiendo

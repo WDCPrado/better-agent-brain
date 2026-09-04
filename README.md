@@ -56,7 +56,10 @@ repo en vez de copiada.
 3. **Lee los repos** que le pases, por URL o por ruta.
 4. **Escribe el vault**: los contextos, el índice y las cuatro carpetas.
 5. **Deja el sistema andando**: `check.sh` para que no se pudra, un hook que recuerda escribir, y
-   la regla en el archivo de tu agente —en los dos, si tienes los dos, apuntando al mismo vault.
+   la regla en el archivo del agente **desde el que lo corriste**, y solo en ese.
+
+Si usas más de un agente, córrelo una vez en cada uno: el segundo encuentra el vault del primero
+y se conecta al mismo. Nunca toca la configuración de una herramienta que no te lo pidió.
 
 Si ya tenías notas, entra en **modo reorganizar**: mueve información, no la crea ni la corrige.
 Cuando algo del vault contradice lo que respondiste, para y te pregunta cuál de las dos gana.
