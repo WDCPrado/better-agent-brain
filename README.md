@@ -1,28 +1,40 @@
 # better-agent-brain
 
-Memoria entre sesiones para agentes de código, en archivos de texto que tú controlas.
-Funciona con **Claude Code** y con **Codex**.
+**Memoria entre sesiones para agentes de código, en archivos de texto que tú controlas.**
+Funciona con Claude Code y con Codex, y los dos pueden compartir el mismo cerebro.
 
-Tu agente no recuerda nada de una sesión a la otra. Lo que se pierde no es el código —eso está
-en git— sino **lo que costó descubrir**: por qué se descartó la librería obvia, qué se rompe si
-tocas ese endpoint, qué restricción del proveedor no está documentada en ninguna parte. Eso se
-vuelve a explicar cada vez, o se vuelve a aprender a golpes.
+<!-- HERO -->
 
-Este repo instala una skill, `/init-brain` (`$init-brain` en Codex), que te entrevista, lee tus
-repos y deja funcionando
-un **vault de Obsidian** donde el agente escribe esas cosas al terminar de trabajar, y las lee antes de empezar.
+Tu agente empieza cada sesión en blanco. Lo que se pierde no es el código —eso está en git— sino
+**lo que costó descubrir**: por qué se descartó la librería obvia, qué se rompe si tocas ese
+endpoint, qué restricción del proveedor no está documentada en ninguna parte, qué ya se intentó
+y falló. Eso se vuelve a explicar en cada sesión, o se vuelve a aprender a golpes.
+
+`better-agent-brain` instala una skill —`/init-brain`, o `$init-brain` en Codex— que te
+entrevista, lee tus repos y deja funcionando un **vault de Obsidian**: el agente lo lee antes de
+empezar y escribe en él al terminar.
+
+```
+python3 instalar.py     →     /init-brain     →     ya tienes memoria
+```
 
 ## Qué no es
 
-No es un RAG ni un índice de transcripciones. No hay embeddings, ni base vectorial, ni un
-servicio corriendo. Son archivos markdown y un índice de una pantalla que se carga entero en
-cada sesión.
+**No es un RAG ni un índice de transcripciones.** Sin embeddings, sin base vectorial, sin
+servicios, sin llamadas a ninguna API. Son archivos markdown y un índice de una pantalla que
+entra completo en el contexto de cada sesión.
 
-La apuesta es que **destilar gana a grabar**: una nota escrita a mano con el hecho que importa
-vale más que la conversación completa donde ese hecho apareció. Mientras el índice quepa en el
-contexto —y cabe hasta unos cientos de notas— la recuperación es perfecta y cuesta cero.
+La apuesta es que **destilar gana a grabar**. Una nota escrita a mano con el hecho que importa
+vale más que la conversación entera donde ese hecho apareció, por tres razones concretas:
 
-Además lo puedes leer tú. Es un vault de Obsidian; el grafo es tuyo.
+- **La recuperación no falla.** Mientras el índice quepa en el contexto —y cabe hasta varios
+  cientos de notas— el agente lo tiene entero, siempre. No hay top-k que se salte el resultado
+  #7 sin avisar.
+- **Lo que se guarda es lo que resultó cierto**, no lo que se dijo. Una transcripción devuelve
+  con la misma confianza la conversación donde te equivocaste y la conclusión final; acá las
+  notas se fechan y se reemplazan, y la de arriba manda.
+- **Lo puedes leer tú.** Es markdown en tu disco. El grafo es tuyo, y si mañana cambias de
+  agente —o abandonas este proyecto— tus notas siguen siendo tus notas.
 
 ## Qué necesitas
 
@@ -158,3 +170,8 @@ que es parte de tu memoria, no del instalador.
 
 Verifica que toda nota sea alcanzable desde el índice, que ningún nombre esté repetido, y lista
 los enlaces a notas que todavía no existen —que no son errores: son lo que falta escribir.
+
+## Licencia
+
+MIT — ver [LICENSE](LICENSE). Úsalo, cámbialo y repártelo; el cerebro que escribas con él es
+tuyo y no viaja a ninguna parte.
