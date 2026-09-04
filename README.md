@@ -8,9 +8,9 @@ en git— sino **lo que costó descubrir**: por qué se descartó la librería o
 tocas ese endpoint, qué restricción del proveedor no está documentada en ninguna parte. Eso se
 vuelve a explicar cada vez, o se vuelve a aprender a golpes.
 
-Este repo instala un comando, `/init-brain`, que te entrevista, lee tus repos y deja funcionando
-un **vault de Obsidian** donde el agente escribe esas cosas al terminar de trabajar, y las lee
-antes de empezar.
+Este repo instala una skill, `/init-brain` (`$init-brain` en Codex), que te entrevista, lee tus
+repos y deja funcionando
+un **vault de Obsidian** donde el agente escribe esas cosas al terminar de trabajar, y las lee antes de empezar.
 
 ## Qué no es
 
@@ -52,11 +52,16 @@ python3 instalar.py
 
 En Windows es `python instalar.py`. En Linux y macOS `./instalar.sh` hace lo mismo.
 
-Detecta los agentes que tengas (`~/.claude`, `~/.codex`) e instala el comando en cada uno. Luego:
+Detecta los agentes que tengas (`~/.claude`, `~/.codex`) e instala la skill en cada uno. Luego,
+en tu agente:
 
-```
-/init-brain
-```
+| Agente | Escribe |
+|---|---|
+| Claude Code | `/init-brain` |
+| Codex | `$init-brain` |
+
+En Codex las skills son **menciones con `$`**, no slash commands: `/init-brain` no autocompleta.
+Si no te acuerdas, `/skills` abre la lista y te inserta la mención.
 
 **Este repo no es tu cerebro.** Es solo el instalador: copia el comando y después se puede
 borrar. Tu vault se crea en otra ruta y es tuyo.
@@ -75,13 +80,14 @@ Instala better-agent-brain en esta máquina y configura mi memoria:
 1. Clona https://github.com/WDCPrado/better-agent-brain en una carpeta temporal.
 2. Corre `python3 instalar.py` desde ahí (en Windows, `python instalar.py`).
    Debe dejar la skill en la carpeta del agente desde el que me estás leyendo.
-3. Confírmame que quedó instalada y dime que corra /init-brain.
+3. Confírmame que quedó instalada y dime exactamente cómo invocarla en el agente
+   desde el que me estás leyendo (en Claude Code es /init-brain; en Codex, $init-brain).
 
 No crees ningún vault todavía, no toques mi configuración fuera de eso, y no
 borres la carpeta temporal hasta que yo lo confirme.
 ```
 
-El paso de crear el cerebro es aparte a propósito: `/init-brain` te va a entrevistar, y esa
+El paso de crear el cerebro es aparte a propósito: la skill te va a entrevistar, y esa
 conversación es la que define qué recuerda.
 
 ## Qué hace `/init-brain`

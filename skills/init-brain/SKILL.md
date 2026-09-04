@@ -1,6 +1,6 @@
 ---
 name: init-brain
-description: Crea o reorganiza el cerebro de memoria de la persona — un vault de Obsidian donde el agente escribe lo que no se deduce del código ni del historial. Entrevista a la persona, lee sus repos, arma los contextos y deja el sistema andando (índice, check, hook y la regla en el archivo del agente). Sirve para Claude Code y para Codex, y varios agentes pueden compartir un mismo cerebro: al configurar el segundo pregunta si va a escribirlo o solo leerlo. Úsala cuando pidan /init-brain, "arma mi memoria", "configurar el cerebro", "instalar better-agent-brain", o cuando el índice exista pero esté desordenado y haya que reorganizarlo sin perder información.
+description: Crea o reorganiza el cerebro de memoria de la persona — un vault de Obsidian donde el agente escribe lo que no se deduce del código ni del historial. Entrevista a la persona, lee sus repos, arma los contextos y deja el sistema andando (índice, check, hook y la regla en el archivo del agente). Sirve para Claude Code y para Codex, y varios agentes pueden compartir un mismo cerebro: al configurar el segundo pregunta si va a escribirlo o solo leerlo. Úsala cuando pidan /init-brain (Claude Code) o $init-brain (Codex), "arma mi memoria", "configurar el cerebro", "instalar better-agent-brain", o cuando el índice exista pero esté desordenado y haya que reorganizarlo sin perder información.
 ---
 
 # init-brain
@@ -29,6 +29,10 @@ un cerebro nuevo al lado de uno que ya existía.
 | Reglas globales | `~/.claude/CLAUDE.md` | `~/.codex/AGENTS.md` |
 | Skills | `~/.claude/skills/` | `~/.codex/skills/` |
 | Hooks | `settings.json` | `hooks.json` |
+
+Se invoca distinto en cada uno: en Claude Code es `/init-brain`; en Codex las skills son
+menciones, así que es `$init-brain` —o `/skills`, que abre un selector e inserta la mención—.
+Cuando cierres, dile a la persona la forma que corresponde a **su** agente.
 
 En Windows la carpeta del agente es `%USERPROFILE%\.claude` / `%USERPROFILE%\.codex`; el resto
 es igual. **Nunca escribas rutas con `~` dentro de los archivos de configuración en Windows**:

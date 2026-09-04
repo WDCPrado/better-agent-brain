@@ -18,7 +18,9 @@ REPO = pathlib.Path(__file__).resolve().parent
 ORIGEN = REPO / "skills" / "init-brain"   # las plantillas viven dentro, así los dos
                                           # modos dejan exactamente la misma estructura
 
-AGENTES = [("Claude Code", ".claude"), ("Codex", ".codex")]
+# El comando cambia por agente: Claude Code usa slash commands; en Codex las
+# skills son menciones con $ (o se eligen con /skills).
+AGENTES = [("Claude Code", ".claude", "/init-brain"), ("Codex", ".codex", "$init-brain")]
 
 
 def instalar(base: pathlib.Path, enlazar: bool) -> str:
@@ -45,8 +47,8 @@ def main() -> int:
     casa = pathlib.Path.home()
 
     print("Instalando /init-brain:", flush=True)
-    encontrados = 0
-    for nombre, carpeta in AGENTES:
+    encontrados = []
+    for nombre, carpeta, _ in AGENTES:
         base = casa / carpeta
         if not base.is_dir():
             continue
@@ -55,7 +57,7 @@ def main() -> int:
         except Exception as e:
             print(f"  {nombre}: no se pudo ({e})", file=sys.stderr)
             continue
-        encontrados += 1
+        encontrados.append(nombre)
         aviso = " (symlink no permitido, se copió)" if enlazar and modo == "copiado" else ""
         print(f"  {nombre:<12} -> {base / 'skills' / 'init-brain'}{aviso}")
 
@@ -69,7 +71,10 @@ def main() -> int:
 
     if not enlazar:
         print("\nEste repo ya no hace falta; puedes borrarlo.")
-    print("Abre tu agente y corre /init-brain")
+    print("\nAbre tu agente y escribe:")
+    for nombre, _, comando in AGENTES:
+        if nombre in encontrados:
+            print(f"  {nombre:<12} {comando}")
     return 0
 
 
