@@ -28,8 +28,12 @@ for nombre, rutas in sorted(notas.items()):
         print(f"nombre ambiguo '{nombre}': {', '.join(map(str, rutas))}")
         fallo = True
 
+# Los ejemplos van entre backticks —`[[wikilinks]]`, bloques de código— y no son
+# enlaces: contarlos llena el cierre de "pendientes" que nadie va a escribir nunca.
+sin_codigo = lambda t: re.sub(r"`{1,3}[^`]*`{1,3}", "", t, flags=re.S)
+
 enlaces = lambda p: {m.split("|")[0].split("#")[0].strip().rsplit("/", 1)[-1]
-                     for m in re.findall(r"\[\[([^\]]+)\]\]", p.read_text())}
+                     for m in re.findall(r"\[\[([^\]]+)\]\]", sin_codigo(p.read_text()))}
 
 # 1. alcanzabilidad desde el índice
 vistos, cola, rotos = set(), deque(enlaces(raiz / "MEMORY.md")), set()
