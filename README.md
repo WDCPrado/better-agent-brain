@@ -26,9 +26,9 @@ Además lo puedes leer tú. Es un vault de Obsidian; el grafo es tuyo.
 
 ## Qué necesitas
 
-**Obligatorio: `bash` y `python3` (3.8 o más nuevo). Nada más.** Sin paquetes que instalar, sin
-entorno virtual, sin servicios. Los scripts no usan `find -printf` ni `timeout`, así que corren
-igual en Linux y en macOS.
+**Obligatorio: `python3` (3.8 o más nuevo). Nada más.** Sin paquetes que instalar, sin entorno
+virtual, sin servicios, sin `bash`. El instalador, el check y el hook son Python puro de la
+biblioteca estándar, así que corren igual en **Linux, macOS y Windows**.
 
 Todo lo demás es opcional y el sistema funciona sin ello:
 
@@ -47,8 +47,10 @@ no un requisito. Si mañana lo abandonas, tus notas siguen siendo tus notas.
 ```bash
 git clone https://github.com/WDCPrado/better-agent-brain.git
 cd better-agent-brain
-./instalar.sh
+python3 instalar.py
 ```
+
+En Windows es `python instalar.py`. En Linux y macOS `./instalar.sh` hace lo mismo.
 
 Detecta los agentes que tengas (`~/.claude`, `~/.codex`) e instala el comando en cada uno. Luego:
 
@@ -59,8 +61,28 @@ Detecta los agentes que tengas (`~/.claude`, `~/.codex`) e instala el comando en
 **Este repo no es tu cerebro.** Es solo el instalador: copia el comando y después se puede
 borrar. Tu vault se crea en otra ruta y es tuyo.
 
-Si vas a modificar la skill, instala con `./instalar.sh --link` para que quede enlazada a este
-repo en vez de copiada.
+Si vas a modificar la skill, instala con `--link` para que quede enlazada a este repo en vez de
+copiada. (En Windows los enlaces simbólicos piden modo desarrollador; si no lo tienes, copia y
+te lo dice.)
+
+### O pídeselo a tu agente
+
+Si prefieres no tocar la terminal, pega esto tal cual en Claude Code, Codex o Cursor:
+
+```text
+Instala better-agent-brain en esta máquina y configura mi memoria:
+
+1. Clona https://github.com/WDCPrado/better-agent-brain en una carpeta temporal.
+2. Corre `python3 instalar.py` desde ahí (en Windows, `python instalar.py`).
+   Debe dejar la skill en la carpeta del agente desde el que me estás leyendo.
+3. Confírmame que quedó instalada y dime que corra /init-brain.
+
+No crees ningún vault todavía, no toques mi configuración fuera de eso, y no
+borres la carpeta temporal hasta que yo lo confirme.
+```
+
+El paso de crear el cerebro es aparte a propósito: `/init-brain` te va a entrevistar, y esa
+conversación es la que define qué recuerda.
 
 ## Qué hace `/init-brain`
 

@@ -25,6 +25,10 @@ si conviene: quien corre el comando en una herramienta no está pidiendo nada so
 | Skills | `~/.claude/skills/` | `~/.codex/skills/` |
 | Hooks | `settings.json` | `hooks.json` |
 
+En Windows la carpeta del agente es `%USERPROFILE%\.claude` / `%USERPROFILE%\.codex`; el resto
+es igual. **Nunca escribas rutas con `~` dentro de los archivos de configuración en Windows**:
+resuélvelas completas, porque ahí `~` no se expande.
+
 La razón es que el archivo de reglas de otro agente puede venir de un **repo espejo**: entonces
 el cambio no es local, hay que commitearlo y publicarlo, y esos repos aparecen recién al
 buscarlos —quien te invocó puede ni saber que existen—. Publicar en un repo ajeno a lo que te
@@ -57,10 +61,12 @@ Para encontrar el vault de esta máquina, en este orden y parando en el primero 
 
 1. **El archivo de reglas del agente** (`~/.claude/CLAUDE.md` o `~/.codex/AGENTS.md`) ya trae la
    ruta, porque este mismo comando la escribió la primera vez:
+   Busca en esos archivos **una ruta que termine en `MEMORY.md`**. Léelos directamente si es
+   más simple —funciona en cualquier sistema—; en Unix este atajo sirve:
    ```bash
    grep -hoE '[~/][^ `]*/MEMORY\.md' ~/.claude/CLAUDE.md ~/.codex/AGENTS.md 2>/dev/null | sort -u
    ```
-   Extrae **rutas**, no menciones: esos archivos hablan de `MEMORY.md` en varias líneas y solo
+   Busca **rutas**, no menciones: esos archivos hablan de `MEMORY.md` en varias líneas y solo
    una es el puntero. Si sale una sola ruta, ese es el vault. Si salen dos distintas, para y
    pregunta: la memoria está partida en dos y hay que decidir cuál queda.
 
@@ -253,14 +259,21 @@ si el conteo de alcanzables bajó, rompiste un enlace.
 Un vault que nadie lee ni escribe no es memoria. Instala las tres piezas **en el agente que te
 invocó**, y solo en ese:
 
-1. **Las carpetas y el `check.sh`.** Copia `check.py` y `check.sh` de `plantillas/` a la raíz
-   del vault. Verifica tres cosas: que toda nota sea alcanzable desde `MEMORY.md` siguiendo
+1. **Las carpetas y el check.** Copia `check.py` de `plantillas/` a la raíz del vault (y
+   `check.sh`, que es solo un atajo para Unix). Se corre con `python3 check.py` en cualquier
+   sistema. Verifica tres cosas: que toda nota sea alcanzable desde `MEMORY.md` siguiendo
    enlaces, que ningún nombre esté repetido, y qué enlaces quedan pendientes de escribir.
 
-2. **El hook.** Copia `aviso.sh` al vault y regístralo como hook `UserPromptSubmit` en el
-   `settings.json` de Claude Code. Avisa cuando pasan muchos mensajes sin que el vault cambie.
-   **Va en la configuración de la máquina, no en un repo de configuración versionado**, porque
-   lleva una ruta local.
+2. **El hook.** Copia `aviso.py` al vault y regístralo como hook `UserPromptSubmit` en el
+   `settings.json` de Claude Code, con la ruta completa y el intérprete del sistema:
+
+   | | Comando |
+   |---|---|
+   | Linux / macOS | `python3 /ruta/al/vault/aviso.py` |
+   | Windows | `python C:\ruta\al\vault\aviso.py` |
+
+   Avisa cuando pasan muchos mensajes sin que el vault cambie. **Va en la configuración de la
+   máquina, no en un repo de configuración versionado**, porque lleva una ruta local.
 
    En Codex, **comprueba antes que su `hooks.json` acepte el evento** en vez de asumirlo: al
    3 de septiembre de 2026 su CLI no documenta los hooks y los que trae de fábrica son
