@@ -48,9 +48,11 @@ Para encontrar el vault de esta máquina, en este orden y parando en el primero 
 1. **El archivo de reglas del agente** (`~/.claude/CLAUDE.md` o `~/.codex/AGENTS.md`) ya trae la
    ruta, porque este mismo comando la escribió la primera vez:
    ```bash
-   grep -n 'MEMORY.md' ~/.claude/CLAUDE.md ~/.codex/AGENTS.md 2>/dev/null
+   grep -hoE '[~/][^ `]*/MEMORY\.md' ~/.claude/CLAUDE.md ~/.codex/AGENTS.md 2>/dev/null | sort -u
    ```
-   La ruta que aparezca ahí es el vault. **Ese es el puntero oficial y no hay otro:** no
+   Extrae **rutas**, no menciones: esos archivos hablan de `MEMORY.md` en varias líneas y solo
+   una es el puntero. Si sale una sola ruta, ese es el vault. Si salen dos distintas, para y
+   pregunta: la memoria está partida en dos y hay que decidir cuál queda. **Ese es el puntero oficial y no hay otro:** no
    inventes un archivo de configuración aparte, porque un segundo puntero es un segundo lugar
    donde equivocarse.
 2. Si no está, pregunta dónde va el vault y propón `~/brain`.
