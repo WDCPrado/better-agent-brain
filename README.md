@@ -45,7 +45,7 @@ no un requisito. Si mañana lo abandonas, tus notas siguen siendo tus notas.
 ## Instalación
 
 ```bash
-git clone https://github.com/<usuario>/better-agent-brain.git
+git clone https://github.com/WDCPrado/better-agent-brain.git
 cd better-agent-brain
 ./instalar.sh
 ```
