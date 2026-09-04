@@ -15,9 +15,14 @@ sesiones lo usen.
 
 ## Un agente por vez: el que te invocó
 
-Este sistema no es de una herramienta en particular, pero **configura únicamente el agente desde
-el que te están corriendo**. Nunca toques la configuración de otro, ni siquiera para preguntar
+Este sistema no es de una herramienta en particular, pero **escribe únicamente en el agente desde
+el que te están corriendo**. Nunca modifiques la configuración de otro, ni siquiera para preguntar
 si conviene: quien corre el comando en una herramienta no está pidiendo nada sobre las demás.
+
+**La restricción es de escritura, no de lectura.** En el paso 0 tienes que **leer los archivos de
+todos los agentes** para encontrar el vault: leer no es tocar, y el puntero puede estar en
+cualquiera de ellos. Saltarte esa lectura es lo que provoca el peor error de este comando —crear
+un cerebro nuevo al lado de uno que ya existía.
 
 | | Claude Code | Codex |
 |---|---|---|
@@ -59,10 +64,12 @@ nombre de la carpeta para decidir.
 
 Para encontrar el vault de esta máquina, en este orden y parando en el primero que dé:
 
-1. **El archivo de reglas del agente** (`~/.claude/CLAUDE.md` o `~/.codex/AGENTS.md`) ya trae la
-   ruta, porque este mismo comando la escribió la primera vez:
-   Busca en esos archivos **una ruta que termine en `MEMORY.md`**. Léelos directamente si es
-   más simple —funciona en cualquier sistema—; en Unix este atajo sirve:
+1. **El archivo de reglas de cualquier agente** ya trae la ruta, porque este mismo comando la
+   escribió la primera vez. **Míralos todos, no solo el tuyo**: si la persona instaló el cerebro
+   desde Claude Code, el puntero está en `~/.claude/CLAUDE.md` aunque ahora te esté corriendo en
+   Codex, y viceversa. Leerlos es obligatorio; escribir en ellos, no.
+   Busca en **todos** esos archivos una ruta que termine en `MEMORY.md`. Léelos directamente si
+   es más simple —funciona en cualquier sistema—; en Unix este atajo los cubre de una:
    ```bash
    grep -hoE '[~/][^ `]*/MEMORY\.md' ~/.claude/CLAUDE.md ~/.codex/AGENTS.md 2>/dev/null | sort -u
    ```
