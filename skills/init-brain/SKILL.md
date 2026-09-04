@@ -1,24 +1,37 @@
 ---
-name: init-claude-brain
-description: Crea o reorganiza el cerebro de memoria de la persona — un vault de Obsidian en git donde Claude escribe lo que no se deduce del código ni del historial. Entrevista a la persona, lee sus repos, arma los contextos y deja el sistema andando (índice, check, hook y la regla en el CLAUDE.md). Úsala cuando pidan /init-claude-brain, "arma mi memoria", "configurar el brain", "instalar claude-brain", o cuando el índice exista pero esté desordenado y haya que reorganizarlo sin perder información.
+name: init-brain
+description: Crea o reorganiza el cerebro de memoria de la persona — un vault de Obsidian donde el agente escribe lo que no se deduce del código ni del historial. Entrevista a la persona, lee sus repos, arma los contextos y deja el sistema andando (índice, check, hook y la regla en el archivo del agente). Sirve para Claude Code y para Codex. Úsala cuando pidan /init-brain, "arma mi memoria", "configurar el cerebro", "instalar better-agent-brain", o cuando el índice exista pero esté desordenado y haya que reorganizarlo sin perder información.
 ---
 
-# init-claude-brain
+# init-brain
 
-Deja funcionando un cerebro: un vault de Obsidian versionado en git donde Claude escribe, entre
-sesiones, **lo que no se deduce leyendo el código ni el historial de git**. No es documentación
-del repo; es lo que quedaría en la cabeza de un colega que lleva años en el proyecto.
+Deja funcionando un cerebro: un vault de Obsidian donde el agente escribe, entre sesiones,
+**lo que no se deduce leyendo el código ni el historial de git**. No es documentación del repo;
+es lo que quedaría en la cabeza de un colega que lleva años en el proyecto.
 
-El resultado de este comando es un vault que se lee solo desde su índice, un `check.sh` que
-avisa cuando se pudre, un hook que recuerda escribirlo y una regla en el `CLAUDE.md` de la
-persona para que todas las sesiones lo usen.
+El resultado es un vault que se lee solo desde su índice, un `check.sh` que avisa cuando se
+pudre, un hook que recuerda escribirlo y una regla en el archivo del agente para que todas las
+sesiones lo usen.
+
+## Los dos agentes
+
+Este sistema no es de una herramienta en particular. Instala en la que exista:
+
+| | Claude Code | Codex |
+|---|---|---|
+| Reglas globales | `~/.claude/CLAUDE.md` | `~/.codex/AGENTS.md` |
+| Skills | `~/.claude/skills/` | `~/.codex/skills/` |
+| Hooks | `settings.json` | `hooks.json` |
+
+Si están los dos, configura los dos y **apunta ambos al mismo vault**. Dos cerebros para una
+persona es el peor resultado posible: cada sesión escribiría en la mitad que el otro no lee.
 
 ---
 
 ## Paso 0 — Encontrar el vault (haz esto antes que nada)
 
 **Nunca escribas dentro del repo donde vive esta skill.** Ese repo es solo el instalador: se
-clona, se instala y se puede borrar. El vault es otra cosa, en otra ruta, con su propio git.
+clona, se instala y se puede borrar. El vault es otra cosa, en otra ruta.
 
 Cómo distinguirlos, sin ambigüedad:
 
@@ -32,20 +45,19 @@ nombre de la carpeta para decidir.
 
 Para encontrar el vault de esta máquina, en este orden y parando en el primero que dé:
 
-1. **El `CLAUDE.md` de la persona** (`~/.claude/CLAUDE.md`) ya trae la ruta, porque este mismo
-   comando la escribió la primera vez. Busca la línea del import:
+1. **El archivo de reglas del agente** (`~/.claude/CLAUDE.md` o `~/.codex/AGENTS.md`) ya trae la
+   ruta, porque este mismo comando la escribió la primera vez:
    ```bash
-   grep -n 'MEMORY.md' ~/.claude/CLAUDE.md
+   grep -n 'MEMORY.md' ~/.claude/CLAUDE.md ~/.codex/AGENTS.md 2>/dev/null
    ```
-   La ruta de ese `@.../MEMORY.md` es el vault. **Este es el puntero oficial y no hay otro:**
-   no inventes un archivo de configuración aparte, porque un segundo puntero es un segundo
-   lugar donde equivocarse.
-2. Si no está, pregunta dónde va el vault y propón `~/claude-brain`.
+   La ruta que aparezca ahí es el vault. **Ese es el puntero oficial y no hay otro:** no
+   inventes un archivo de configuración aparte, porque un segundo puntero es un segundo lugar
+   donde equivocarse.
+2. Si no está, pregunta dónde va el vault y propón `~/brain`.
 
-Si la persona ya tenía un cerebro antes de instalar esto y el import no existe, pídele la ruta
-antes de crear nada: **crear un vault nuevo cuando ya había uno es el peor error posible** de
-este comando, porque parte la memoria en dos y ninguna de las dos mitades vuelve a estar
-completa.
+Si la persona ya tenía un cerebro y el puntero no existe, pídele la ruta antes de crear nada:
+**crear un vault nuevo cuando ya había uno es el peor error posible** de este comando, porque
+parte la memoria en dos y ninguna de las dos mitades vuelve a estar completa.
 
 ---
 
@@ -80,9 +92,8 @@ Es la dueña del cerebro. De acá cuelga todo lo suyo.
 - **Qué construye por su cuenta.** Por cada proyecto: si hay repo git, pide la URL o la ruta y
   léelo; si no lo hay, pide una descripción en dos frases. Un proyecto es cualquier cosa con
   partes de las que se acumulen hechos, tenga o no repo, tarjeta o clientes.
-- Cómo le gusta que se trabaje: idioma de las notas y los commits, si quiere PR para todo o
-  commit directo, qué le carga que Claude haga. Esto es oro y casi nadie lo escribe: va a
-  `forma-de-trabajo/`.
+- Cómo le gusta que se trabaje: idioma de las notas, qué le carga que el agente haga, qué espera
+  antes de que toque código. Esto es oro y casi nadie lo escribe: va a `forma-de-trabajo/`.
 
 ### Bloque 2 — Las organizaciones donde trabaja
 
@@ -109,7 +120,7 @@ un proveedor cloud, un servicio de pagos.
 ## Paso 3 — Leer antes de escribir
 
 Por cada repo que te hayan dado, léelo lo justo para poder escribir su contexto: README,
-`package.json` o equivalente, la forma de las carpetas, el `CLAUDE.md` si tiene. **No lo
+`package.json` o equivalente, la forma de las carpetas, el archivo de reglas si tiene. **No lo
 resumas.** El contexto de un repo responde "¿qué es esto y cómo funciona?" con lo que *no* está
 escrito ahí: qué rompe si lo tocas, qué pareció buena idea y no lo era, qué depende de qué.
 
@@ -184,8 +195,8 @@ crece el cerebro, que es la única razón por la que se puede cargar entero en c
 ### Las reglas al escribir
 
 - **Una nota = un hecho.** Si el título necesita una "y", son dos notas.
-- **Nunca dupliques** lo que ya dicen el README, el `CLAUDE.md` del repo o el diff. Si se deduce
-  leyendo el código, no va.
+- **Nunca dupliques** lo que ya dicen el README, el archivo de reglas del repo o el diff. Si se
+  deduce leyendo el código, no va.
 - **Ninguna nota nace huérfana.** En el mismo turno que la escribes: dale su `contexto` y
   agrégale su línea en el índice de ese contexto.
 - Enlaza con `[[wikilinks]]` **por pertenencia, nunca por comparación**. Un enlace es una arista
@@ -226,44 +237,50 @@ si el conteo de alcanzables bajó, rompiste un enlace.
 
 ## Paso 6 — Dejar el sistema andando
 
-Un vault que nadie lee ni escribe no es memoria. Instala las cuatro piezas:
+Un vault que nadie lee ni escribe no es memoria. Instala las tres piezas, en cada agente que
+exista en la máquina:
 
 1. **Las carpetas y el `check.sh`.** Copia `check.py` y `check.sh` de `plantillas/` a la raíz
    del vault. Verifica tres cosas: que toda nota sea alcanzable desde `MEMORY.md` siguiendo
    enlaces, que ningún nombre esté repetido, y qué enlaces quedan pendientes de escribir.
 
-2. **El hook.** Copia `aviso.sh` al vault y regístralo como hook `UserPromptSubmit` en el
-   `settings.json` de la máquina. Vigila los dos olvidos: que pasen muchos mensajes sin escribir
-   nada, y que lo escrito no haya salido a `origin`. **El hook se registra en el settings de la
-   máquina, no en un repo espejo**, porque lleva una ruta local.
+2. **El hook.** Copia `aviso.sh` al vault y regístralo como hook `UserPromptSubmit` —en
+   `settings.json` para Claude Code, en `hooks.json` para Codex—. Avisa cuando pasan muchos
+   mensajes sin que el vault cambie. **Va en la configuración de la máquina, no en un repo de
+   configuración versionado**, porque lleva una ruta local.
 
-3. **La regla en el `CLAUDE.md` de la persona.** Sin esto, ninguna sesión sabe que el cerebro
-   existe. Escribe un bloque que diga: dónde vive el vault, el import del índice
-   (`@<ruta>/MEMORY.md`), que **antes de trabajar** hay que leer lo relacionado y seguir sus
-   enlaces, y que **al terminar** se escribe lo que no se deduce del código, se corre `check.sh`
-   y se hace commit **y push**. Usa `plantillas/CLAUDE.md` como base.
+3. **La regla en el archivo del agente.** Sin esto, ninguna sesión sabe que el cerebro existe.
+   Usa `plantillas/reglas.md` y escríbela en `~/.claude/CLAUDE.md`, en `~/.codex/AGENTS.md`, o
+   en los dos, con la ruta real del vault.
 
-   **Antes de escribirlo, comprueba si ese `CLAUDE.md` lo genera otro repo** (un "espejo" de
-   configuración): si `~/.claude/CLAUDE.md` es copia de un archivo versionado en otro lado,
-   editar el destino se pierde en la próxima sincronización. Búscalo así:
+   **Antes de escribirla, comprueba si ese archivo lo genera otro repo** (un "espejo" de
+   configuración): si es copia de un archivo versionado en otro lado, editar el destino se
+   pierde en la próxima sincronización. Búscalo así:
 
    ```bash
-   grep -rl "$(head -c 200 ~/.claude/CLAUDE.md | tail -c 100)" ~/Projects 2>/dev/null
+   grep -rl "$(head -c 200 ~/.claude/CLAUDE.md | tail -c 100)" ~ --include='*.md' 2>/dev/null
    ```
 
    Si aparece un espejo, **escribe primero en el repo espejo y desde ahí copia** — y anota ese
    hecho como nota del vault, porque ninguna sesión futura puede adivinarlo.
 
-4. **El git.** Si el vault no es repo todavía: `git init`, primer commit. Ofrece crear el remoto
-   y explica por qué importa: una nota que solo existe en esta máquina no es memoria.
+### Sobre git
+
+**El vault no tiene por qué ser un repo, y este comando no lo convierte en uno.** Versionarlo,
+publicarlo o dejarlo solo en disco es decisión de quien lo escribe, no de este sistema: el hook
+y el `check.sh` funcionan igual en los tres casos.
+
+Al terminar, menciónalo **una vez**, como opción: un vault en git deja ver cómo evolucionó lo
+que se sabía, y sobrevive a que se muera el disco. Si la persona dice que sí, `git init` y ya;
+la disciplina de commitear y publicar es suya y se anota en `forma-de-trabajo/`, no acá.
 
 ---
 
 ## Al cerrar
 
-Corre `check.sh` y muestra el resultado. Después commit y push.
+Corre `check.sh` y muestra el resultado.
 
 Termina diciendo, en pocas líneas: cuántas notas quedaron, qué contextos se crearon, qué quedó
 pendiente de escribir, y **una cosa concreta que la persona pueda hacer ahora** para probar que
-funciona — por ejemplo, abrir el vault en Obsidian, o pedirle a Claude algo que use un hecho que
-acaba de quedar escrito.
+funciona — por ejemplo, abrir el vault en Obsidian, o pedirle al agente algo que use un hecho
+que acaba de quedar escrito.

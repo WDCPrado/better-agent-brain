@@ -1,16 +1,20 @@
 <!--
-  Bloque para el CLAUDE.md de la persona (~/.claude/CLAUDE.md).
-  Reemplaza RUTA_DEL_VAULT por la ruta real; el import del índice es el puntero
-  oficial al vault y lo que permite volver a encontrarlo en la próxima sesión.
-  Si ese CLAUDE.md lo genera un repo espejo, escribe allá y copia desde ahí.
+  Bloque para el archivo de reglas del agente: ~/.claude/CLAUDE.md en Claude Code,
+  ~/.codex/AGENTS.md en Codex. Si están los dos, va en ambos y apuntando al MISMO
+  vault. Reemplaza RUTA_DEL_VAULT por la ruta real: esa línea es el puntero oficial
+  al vault y lo que permite volver a encontrarlo en la próxima sesión.
+  Si ese archivo lo genera un repo espejo, escribe allá y copia desde ahí.
 -->
 
 ## Base de conocimiento (brain)
 
-Vive en `RUTA_DEL_VAULT`, un vault de Obsidian y repo git. Es la memoria entre sesiones: lo que
-no se deduce leyendo el código ni el historial. Su índice está siempre cargado:
+Vive en `RUTA_DEL_VAULT`, un vault de Obsidian. Es la memoria entre sesiones: lo que no se
+deduce leyendo el código ni el historial. **Lee su índice antes de trabajar:**
 
 @RUTA_DEL_VAULT/MEMORY.md
+
+(La línea de arriba lo carga solo en los agentes que soportan imports. Si el tuyo no los
+soporta, ábrelo con una lectura normal: es el mismo archivo.)
 
 Es el único almacén: no crees notas de contexto dentro de los repos ni uses el directorio de
 memoria por proyecto de Claude Code.
@@ -20,7 +24,7 @@ busca igual: `rg -il '<repo-o-tema>' RUTA_DEL_VAULT`. Para todo lo de un context
 wikilink: `rg -l '\[\[nombre-del-contexto\]\]'`.
 
 **Al terminar**, escribe lo que no se deduce del código ni del historial de git. Una nota = un
-hecho. Nunca dupliques lo que ya dice el README, el `CLAUDE.md` del repo o el diff.
+hecho. Nunca dupliques lo que ya dice el README, el archivo de reglas del repo o el diff.
 
 ### Las cuatro carpetas
 
@@ -85,4 +89,6 @@ línea arriba diciendo qué cambió y en qué fecha.
 
 Corre `./check.sh`, que verifica tres cosas: que toda nota sea alcanzable desde `MEMORY.md`
 siguiendo enlaces, que ningún nombre esté repetido y qué enlaces quedan pendientes de escribir.
-Después, commit **y push**; una nota que solo existe en esta máquina no es memoria.
+
+Qué se hace después con el vault —versionarlo, publicarlo, dejarlo en disco— lo decide quien lo
+escribe. Si hay una regla al respecto, va en `forma-de-trabajo/` y manda por sobre esto.
