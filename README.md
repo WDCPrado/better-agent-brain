@@ -104,6 +104,23 @@ y se conecta al mismo. Nunca toca la configuración de una herramienta que no te
 Si ya tenías notas, entra en **modo reorganizar**: mueve información, no la crea ni la corrige.
 Cuando algo del vault contradice lo que respondiste, para y te pregunta cuál de las dos gana.
 
+## Varios agentes, un solo cerebro
+
+Un cerebro puede servir a Claude Code y a Codex a la vez, pero **no hace falta que los dos lo
+escriban**. Cuando configuras el segundo agente, `/init-brain` te pregunta —antes de tocar nada—
+qué rol quieres que tenga:
+
+- **Escritor** — lo lee y lo mantiene: escribe notas nuevas al terminar de trabajar.
+- **Lector** — lo lee para trabajar y no lo escribe. Si en la sesión aparece algo que valdría la
+  pena recordar, te lo dice al final para que lo lleves al agente que sí escribe.
+
+La pregunta solo aparece cuando ya hay un cerebro con notas: **el primer agente es escritor
+siempre**, porque un cerebro que nadie escribe no llega a existir.
+
+Un lector se configura en segundos —no instala el hook ni el check, y no toca el vault— y así
+la memoria tiene un solo dueño en vez de dos herramientas escribiendo versiones distintas del
+mismo hecho. Para cambiar de rol, corre `/init-brain` otra vez y elige el otro.
+
 ## La forma del vault
 
 ```

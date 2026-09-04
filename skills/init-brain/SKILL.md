@@ -1,6 +1,6 @@
 ---
 name: init-brain
-description: Crea o reorganiza el cerebro de memoria de la persona — un vault de Obsidian donde el agente escribe lo que no se deduce del código ni del historial. Entrevista a la persona, lee sus repos, arma los contextos y deja el sistema andando (índice, check, hook y la regla en el archivo del agente). Sirve para Claude Code y para Codex. Úsala cuando pidan /init-brain, "arma mi memoria", "configurar el cerebro", "instalar better-agent-brain", o cuando el índice exista pero esté desordenado y haya que reorganizarlo sin perder información.
+description: Crea o reorganiza el cerebro de memoria de la persona — un vault de Obsidian donde el agente escribe lo que no se deduce del código ni del historial. Entrevista a la persona, lee sus repos, arma los contextos y deja el sistema andando (índice, check, hook y la regla en el archivo del agente). Sirve para Claude Code y para Codex, y varios agentes pueden compartir un mismo cerebro: al configurar el segundo pregunta si va a escribirlo o solo leerlo. Úsala cuando pidan /init-brain, "arma mi memoria", "configurar el cerebro", "instalar better-agent-brain", o cuando el índice exista pero esté desordenado y haya que reorganizarlo sin perder información.
 ---
 
 # init-brain
@@ -87,15 +87,50 @@ parte la memoria en dos y ninguna de las dos mitades vuelve a estar completa.
 
 ---
 
-## Paso 1 — Reconocer el estado
+## Paso 1 — El estado y el rol de este agente
 
-Mira el vault y decide en cuál de los tres casos estás. El caso decide todo lo que sigue:
+Primero, mira el vault y decide en cuál de los tres casos estás:
 
 | Estado | Cómo se ve | Qué haces |
 |---|---|---|
 | **Nuevo** | la ruta no existe, o existe vacía | entrevista completa y creas todo |
 | **Vacío** | hay `MEMORY.md` pero casi ninguna nota | entrevista completa, respetas lo que haya |
 | **Con información** | hay notas y contextos reales | **modo reorganizar**, ver paso 5 |
+
+### El rol: escritor o lector
+
+Un cerebro puede servir a varios agentes, y **no todos tienen por qué escribirlo**. Uno lo
+mantiene y los demás lo aprovechan: así la memoria no se llena de versiones distintas del mismo
+hecho, escritas por herramientas que no se leen entre sí.
+
+**Si el vault estaba Nuevo o Vacío, este agente es escritor y no preguntes nada:** un cerebro que
+nadie escribe no llega a existir. Sáltate el resto de esta sección.
+
+**Si el vault tenía información, ya hay alguien manteniéndolo.** Antes de escribir una sola
+línea —en el vault o en la configuración— pregunta:
+
+> Ya tienes un cerebro con N notas. ¿Qué rol quieres que tenga **este** agente?
+>
+> - **Escritor** — lo lee y también lo mantiene: escribe notas nuevas al terminar.
+> - **Lector** — lo lee para trabajar, pero no lo escribe; el otro agente sigue a cargo.
+
+Y para saber cuál sugerir, mira quién escribe hoy: si otro archivo de reglas ya trae el bloque
+completo, ese agente es el escritor y **lector es la opción razonable** para este.
+
+El rol cambia lo que sigue:
+
+| | Escritor | Lector |
+|---|---|---|
+| Entrevista (paso 2) y escritura (paso 4) | sí | **no, sáltalas** |
+| Reorganizar (paso 5) | sí | **no** |
+| Regla en el archivo del agente | `plantillas/reglas.md` | `plantillas/reglas-lectura.md` |
+| `check.py` y el hook | sí | **no**: nada que verificar ni que recordar escribir |
+
+Un lector termina rapidísimo: paso 0, esta pregunta, la regla corta, y listo. **No toques el
+vault**, ni siquiera para ordenarlo: no es el agente a cargo.
+
+El rol no queda guardado en ninguna parte — se ve en el archivo de reglas de cada agente, según
+qué bloque tenga. Cambiarlo es volver a correr `/init-brain` y elegir el otro.
 
 ---
 
@@ -263,8 +298,14 @@ si el conteo de alcanzables bajó, rompiste un enlace.
 
 ## Paso 6 — Dejar el sistema andando
 
-Un vault que nadie lee ni escribe no es memoria. Instala las tres piezas **en el agente que te
-invocó**, y solo en ese:
+Un vault que nadie lee ni escribe no es memoria. Instala las piezas **en el agente que te
+invocó**, y solo en ese.
+
+**Si este agente es lector**, salta al punto 3 y usa `plantillas/reglas-lectura.md`: no copies
+`check.py` ni instales el hook, porque no hay nada que verificar ni que recordarle escribir. Con
+eso terminaste.
+
+Si es escritor, las tres:
 
 1. **Las carpetas y el check.** Copia `check.py` de `plantillas/` a la raíz del vault (y
    `check.sh`, que es solo un atajo para Unix). Se corre con `python3 check.py` en cualquier
@@ -288,8 +329,8 @@ invocó**, y solo en ese:
    punto 3 es lo que hace falta para que lea la memoria; el hook solo recuerda escribirla.
 
 3. **La regla en el archivo del agente.** Sin esto, ninguna sesión sabe que el cerebro existe.
-   Usa `plantillas/reglas.md` y escríbela en `~/.claude/CLAUDE.md`, en `~/.codex/AGENTS.md`, o
-   en los dos, con la ruta real del vault.
+   Escríbela en el archivo del agente que te invocó, con la ruta real del vault: usa
+   `plantillas/reglas.md` si es escritor, o `plantillas/reglas-lectura.md` si es lector.
 
    **Antes de escribirla, comprueba si ese archivo lo genera otro repo** (un "espejo" de
    configuración): si es copia de un archivo versionado en otro lado, editar el destino se
@@ -316,9 +357,14 @@ la disciplina de commitear y publicar es suya y se anota en `forma-de-trabajo/`,
 
 ## Al cerrar
 
-Corre `check.sh` y muestra el resultado.
+**Si este agente quedó como lector**, di en dos líneas qué vault va a leer, que no lo va a
+escribir y quién sigue a cargo de escribirlo. Nada más: no corras el check, que es del escritor.
 
-Termina diciendo, en pocas líneas: cuántas notas quedaron, qué contextos se crearon, qué quedó
-pendiente de escribir, y **una cosa concreta que la persona pueda hacer ahora** para probar que
-funciona — por ejemplo, abrir el vault en Obsidian, o pedirle al agente algo que use un hecho
-que acaba de quedar escrito.
+**Si quedó como escritor**, corre `python3 check.py` en el vault y muestra el resultado. Termina
+diciendo, en pocas líneas: cuántas notas quedaron, qué contextos se crearon, qué quedó pendiente
+de escribir, y **una cosa concreta que la persona pueda hacer ahora** para probar que funciona —
+por ejemplo, abrir el vault en Obsidian, o pedirle al agente algo que use un hecho que acaba de
+quedar escrito.
+
+En cualquiera de los dos casos, si hay otro agente en la máquina sin configurar, menciónalo en
+una línea: correr `/init-brain` allá lo conecta al mismo cerebro, como lector o escritor.
