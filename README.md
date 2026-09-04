@@ -3,7 +3,12 @@
 **Memoria entre sesiones para agentes de código, en archivos de texto que tú controlas.**
 Funciona con Claude Code y con Codex, y los dos pueden compartir el mismo cerebro.
 
-<!-- HERO -->
+![Un cerebro de ejemplo visto como grafo: el índice al centro, los contextos raíz alrededor y las notas colgando de cada uno](docs/grafo.svg)
+
+<sub>Un cerebro pequeño visto desde Obsidian. `MEMORY` es el índice y solo apunta a los contextos
+raíz —la persona, la organización, las herramientas de terceros—; cada contexto indexa a sus
+hijos, y las notas cuelgan de quien las explica. Por eso el índice no crece cuando crece el
+cerebro. (Grafo de ejemplo; se genera con `docs/grafo.py`.)</sub>
 
 Tu agente empieza cada sesión en blanco. Lo que se pierde no es el código —eso está en git— sino
 **lo que costó descubrir**: por qué se descartó la librería obvia, qué se rompe si tocas ese
