@@ -128,7 +128,8 @@ El rol cambia lo que sigue:
 | Entrevista (paso 2) y escritura (paso 4) | sí | **no, sáltalas** |
 | Reorganizar (paso 5) | sí | **no** |
 | Regla en el archivo del agente | `plantillas/reglas.md` | `plantillas/reglas-lectura.md` |
-| `check.py` y el hook | sí | **no**: nada que verificar ni que recordar escribir |
+| `check.py` y el hook `aviso.py` | sí | **no**: nada que verificar ni que recordar escribir |
+| Hook `indice.py` (`SessionStart`) | si el agente no expande imports | igual: leer el índice es lo suyo |
 
 Un lector termina rapidísimo: paso 0, esta pregunta, la regla corta, y listo. **No toques el
 vault**, ni siquiera para ordenarlo: no es el agente a cargo.
@@ -305,9 +306,9 @@ si el conteo de alcanzables bajó, rompiste un enlace.
 Un vault que nadie lee ni escribe no es memoria. Instala las piezas **en el agente que te
 invocó**, y solo en ese.
 
-**Si este agente es lector**, salta al punto 3 y usa `plantillas/reglas-lectura.md`: no copies
-`check.py` ni instales el hook, porque no hay nada que verificar ni que recordarle escribir. Con
-eso terminaste.
+**Si este agente es lector**, no copies `check.py` ni instales `aviso.py`: no hay nada que
+verificar ni que recordarle escribir. Sí instálale `indice.py` si su agente no expande imports
+(punto 2), y usa `plantillas/reglas-lectura.md` en el punto 3. Con eso terminaste.
 
 Si es escritor, las tres:
 
@@ -316,21 +317,27 @@ Si es escritor, las tres:
    sistema. Verifica tres cosas: que toda nota sea alcanzable desde `MEMORY.md` siguiendo
    enlaces, que ningún nombre esté repetido, y qué enlaces quedan pendientes de escribir.
 
-2. **El hook.** Copia `aviso.py` al vault y regístralo como hook `UserPromptSubmit` en el
-   `settings.json` de Claude Code, con la ruta completa y el intérprete del sistema:
+2. **Los hooks.** Copia `aviso.py` al vault —y `indice.py` si hace falta, ver abajo— y
+   regístralos con la ruta completa y el intérprete del sistema:
 
    | | Comando |
    |---|---|
    | Linux / macOS | `python3 /ruta/al/vault/aviso.py` |
    | Windows | `python C:\ruta\al\vault\aviso.py` |
 
-   Avisa cuando pasan muchos mensajes sin que el vault cambie. **Va en la configuración de la
-   máquina, no en un repo de configuración versionado**, porque lleva una ruta local.
+   Van en la configuración de la máquina —`settings.json` en Claude Code, `hooks.json` en
+   Codex—, **no en un repo de configuración versionado**, porque llevan una ruta local. Los dos
+   agentes aceptan `SessionStart` y `UserPromptSubmit`, y lo que el hook escribe en stdout entra
+   como contexto.
 
-   En Codex, **comprueba antes que su `hooks.json` acepte el evento** en vez de asumirlo: al
-   3 de septiembre de 2026 su CLI no documenta los hooks y los que trae de fábrica son
-   `PostToolUse` y `Stop`. Si no puedes confirmarlo, deja Codex sin hook y dilo: la regla del
-   punto 3 es lo que hace falta para que lea la memoria; el hook solo recuerda escribirla.
+   - **`aviso.py` va en `UserPromptSubmit`**, en cualquier agente que escriba el cerebro. Avisa
+     cuando pasan muchos mensajes sin que el vault cambie. Un lector no lo necesita.
+   - **`indice.py` va en `SessionStart`, y solo si el agente no expande imports.** Claude Code sí
+     los expande, así que ahí sobra: el `@ruta/MEMORY.md` de la regla ya mete el índice en cada
+     sesión. **Codex no los expande** —la línea le queda como texto—, así que sin este hook el
+     índice nunca llega solo y la memoria depende de que el modelo decida abrir el archivo. Con
+     él, Codex arranca con el mapa igual que Claude. Instálalo tanto para un escritor como para
+     un lector: leer el índice es justamente lo que un lector viene a hacer.
 
 3. **La regla en el archivo del agente.** Sin esto, ninguna sesión sabe que el cerebro existe.
    Escríbela en el archivo del agente que te invocó, con la ruta real del vault: usa

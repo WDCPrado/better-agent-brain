@@ -16,8 +16,10 @@ leyendo el código ni el historial. **Lee su índice antes de trabajar:**
 
 @RUTA_DEL_VAULT/MEMORY.md
 
-(La línea de arriba lo carga solo en los agentes que soportan imports. Si el tuyo no los soporta,
-ábrelo con una lectura normal: es el mismo archivo.)
+(Claude Code expande esa línea y el índice ya está en tu contexto. Codex **no** la expande: la ve
+como texto. Si en tu agente el índice no aparece arriba, un hook `SessionStart` puede inyectarlo
+—`indice.py`— y si tampoco lo hay, **ábrelo con una lectura de archivo antes de responder**: no
+es opcional.)
 
 El índice tiene cuatro secciones —la persona, las organizaciones donde trabaja, los terceros que
 usa y lo transversal— y cada contexto indexa a sus hijos. Si algo del índice se relaciona con lo
