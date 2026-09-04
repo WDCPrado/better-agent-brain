@@ -8,26 +8,44 @@
 # No sabe nada de git a propósito. Publicar el vault —si es que se publica— es
 # decisión de quien lo escribe, no de este sistema.
 #
-# Nunca bloquea ni falla ruidosamente: un aviso que rompe la sesión se desactiva.
+# Todo el trabajo lo hace python3, que ya hace falta para check.sh. Así el hook
+# no depende de `find -printf` ni de `timeout`, que son de GNU y no existen en
+# macOS. Nunca bloquea ni falla ruidosamente: un aviso que rompe la sesión se
+# desactiva.
 set -uo pipefail
 VAULT="$(cd "$(dirname "$0")" && pwd)"
-UMBRAL=${BRAIN_UMBRAL:-15}
 
-sid=$(timeout 1 cat 2>/dev/null | python3 -c 'import json,sys; print(json.load(sys.stdin).get("session_id","-"))' 2>/dev/null) || sid="-"
-estado="${TMPDIR:-/tmp}/brain-aviso-${sid//[^A-Za-z0-9_-]/}"
+python3 - "$VAULT" "${BRAIN_UMBRAL:-15}" "${TMPDIR:-/tmp}" <<'PY' 2>/dev/null || exit 0
+import json, os, pathlib, re, select, sys
 
-huella=$(find "$VAULT" -name '*.md' -not -path '*/.git/*' -printf '%T@\n' 2>/dev/null | sort -rn | head -1) || exit 0
-[ -n "$huella" ] || exit 0
+vault, umbral, tmp = pathlib.Path(sys.argv[1]), int(sys.argv[2]), sys.argv[3]
 
-leido=$(cat "$estado" 2>/dev/null) || leido=""
-if [ "${leido%% *}" = "$huella" ]; then
-  n=$(( ${leido##* } + 1 ))
-else
-  n=1                      # el vault cambió: se escribió algo, la cuenta parte de cero
-fi
-printf '%s %s' "$huella" "$n" > "$estado"
+# El hook recibe el JSON de la sesión por stdin, pero puede no llegar nunca
+# (una prueba a mano, otro agente): se espera un segundo y se sigue igual.
+sid = "-"
+if sys.stdin and select.select([sys.stdin], [], [], 1.0)[0]:
+    try:
+        sid = str(json.load(sys.stdin).get("session_id", "-"))
+    except Exception:
+        pass
 
-if [ "$n" -ge "$UMBRAL" ]; then
-  printf '%s 0' "$huella" > "$estado"   # avisado: no repetir hasta otros UMBRAL mensajes
-  echo "El cerebro ($VAULT) no cambia desde hace $UMBRAL mensajes. Si en este tramo apareció algo que no se deduce del código ni del historial —una decisión y su porqué, un camino descartado, una restricción de un proveedor, un riesgo sin dueño, una técnica que costó— escríbelo ahora como nota, dale su contexto, agrégalo al índice de ese contexto y corre ./check.sh. Si no apareció nada, sigue sin comentarlo."
-fi
+fechas = [p.stat().st_mtime for p in vault.rglob("*.md") if ".git" not in p.parts]
+if not fechas:
+    sys.exit(0)
+huella = f"{max(fechas):.0f}"
+
+estado = pathlib.Path(tmp) / f"brain-aviso-{re.sub(r'[^A-Za-z0-9_-]', '', sid)}"
+previo = estado.read_text().split() if estado.exists() else []
+n = int(previo[1]) + 1 if len(previo) == 2 and previo[0] == huella else 1
+estado.write_text(f"{huella} {n}")
+
+if n >= umbral:
+    estado.write_text(f"{huella} 0")   # avisado: no repetir hasta otros `umbral` mensajes
+    print(
+        f"El cerebro ({vault}) no cambia desde hace {umbral} mensajes. Si en este tramo "
+        "apareció algo que no se deduce del código ni del historial —una decisión y su porqué, "
+        "un camino descartado, una restricción de un proveedor, un riesgo sin dueño, una técnica "
+        "que costó— escríbelo ahora como nota, dale su contexto, agrégalo al índice de ese "
+        "contexto y corre ./check.sh. Si no apareció nada, sigue sin comentarlo."
+    )
+PY

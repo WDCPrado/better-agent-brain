@@ -24,6 +24,24 @@ contexto —y cabe hasta unos cientos de notas— la recuperación es perfecta y
 
 Además lo puedes leer tú. Es un vault de Obsidian; el grafo es tuyo.
 
+## Qué necesitas
+
+**Obligatorio: `bash` y `python3` (3.8 o más nuevo). Nada más.** Sin paquetes que instalar, sin
+entorno virtual, sin servicios. Los scripts no usan `find -printf` ni `timeout`, así que corren
+igual en Linux y en macOS.
+
+Todo lo demás es opcional y el sistema funciona sin ello:
+
+| | Para qué | Si no lo tienes |
+|---|---|---|
+| **Obsidian** | ver el vault como grafo y navegar los enlaces con un clic | no pasa nada: son `.md` planos con frontmatter YAML, y cualquier editor —o el propio agente— los lee igual |
+| **git** | versionar la memoria y respaldarla | el vault vive en disco y funciona idéntico |
+| **ripgrep** (`rg`) | las búsquedas de ejemplo en las reglas | `grep -ril` hace lo mismo, más lento |
+
+El vault **no es un formato de Obsidian**: es markdown con `[[wikilinks]]`, una convención que
+Obsidian entiende y que sigue siendo legible en cualquier parte. Obsidian es un visor bonito,
+no un requisito. Si mañana lo abandonas, tus notas siguen siendo tus notas.
+
 ## Instalación
 
 ```bash

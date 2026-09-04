@@ -20,7 +20,7 @@ Es el único almacén: no crees notas de contexto dentro de los repos ni uses el
 memoria por proyecto de Claude Code.
 
 **Antes de trabajar**, si el índice muestra algo relacionado, léelo y sigue sus enlaces. Si no,
-busca igual: `rg -il '<repo-o-tema>' RUTA_DEL_VAULT`. Para todo lo de un contexto, busca su
+busca igual: `rg -il '<repo-o-tema>' RUTA_DEL_VAULT` (o `grep -ril` si no tienes ripgrep). Para todo lo de un contexto, busca su
 wikilink: `rg -l '\[\[nombre-del-contexto\]\]'`.
 
 **Al terminar**, escribe lo que no se deduce del código ni del historial de git. Una nota = un
