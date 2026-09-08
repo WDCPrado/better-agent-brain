@@ -21,6 +21,8 @@ INDICE = pathlib.Path(__file__).resolve().parent / "MEMORY.md"
 try:
     texto = INDICE.read_text().strip()
     if texto:
-        print(f"Índice del cerebro ({INDICE}). Es la memoria entre sesiones: baja por sus enlaces antes de trabajar y escribe en ella al terminar.\n\n{texto}")
+        # Neutral a propósito: si este agente escribe el cerebro o solo lo lee lo dicen
+        # sus reglas. Ordenar "escribe al terminar" desde acá contradecía al lector.
+        print(f"Índice del cerebro ({INDICE}). Es la memoria entre sesiones: baja por sus enlaces antes de trabajar.\n\n{texto}")
 except Exception:
     pass

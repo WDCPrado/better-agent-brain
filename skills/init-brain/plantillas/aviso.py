@@ -24,33 +24,46 @@ UMBRAL = int(os.environ.get("BRAIN_UMBRAL", "15"))
 VAULT = pathlib.Path(__file__).resolve().parent
 
 
-def session_id():
+def sesion():
     """El JSON de la sesión llega por stdin, pero puede no llegar nunca (una
     prueba a mano, otro agente). En Unix se espera un segundo; en Windows
     select() no sirve sobre stdin, así que solo se lee si no es una consola."""
     try:
         if sys.stdin is None or sys.stdin.closed:
-            return "-"
+            return {}
         if os.name == "nt":
             if sys.stdin.isatty():
-                return "-"
+                return {}
         else:
             import select
 
             if not select.select([sys.stdin], [], [], 1.0)[0]:
-                return "-"
-        return str(json.load(sys.stdin).get("session_id", "-"))
+                return {}
+        return dict(json.load(sys.stdin))
     except Exception:
-        return "-"
+        return {}
+
+
+def dentro_del_vault(cwd):
+    """Una sesión abierta en el propio vault está trabajando en la memoria;
+    recordarle que la escriba es ruido."""
+    try:
+        ruta = pathlib.Path(cwd).resolve()
+        return ruta == VAULT or VAULT in ruta.parents
+    except Exception:
+        return False
 
 
 def main():
+    datos = sesion()
+    if dentro_del_vault(datos.get("cwd", "")):
+        return
     fechas = [p.stat().st_mtime for p in VAULT.rglob("*.md") if ".git" not in p.parts]
     if not fechas:
         return
     huella = f"{max(fechas):.0f}"
 
-    sid = re.sub(r"[^A-Za-z0-9_-]", "", session_id())
+    sid = re.sub(r"[^A-Za-z0-9_-]", "", str(datos.get("session_id", "-")))
     estado = pathlib.Path(tempfile.gettempdir()) / f"brain-aviso-{sid}"
 
     previo = estado.read_text().split() if estado.exists() else []

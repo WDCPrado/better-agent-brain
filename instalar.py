@@ -23,23 +23,48 @@ ORIGEN = REPO / "skills" / "init-brain"   # las plantillas viven dentro, así lo
 AGENTES = [("Claude Code", ".claude", "/init-brain"), ("Codex", ".codex", "$init-brain")]
 
 
+def borrar(p: pathlib.Path) -> None:
+    if p.is_symlink() or p.is_file():
+        p.unlink()
+    elif p.exists():
+        shutil.rmtree(p)
+
+
 def instalar(base: pathlib.Path, enlazar: bool) -> str:
-    """Devuelve el modo usado, o lanza si no se pudo."""
+    """Devuelve el modo usado, o lanza si no se pudo.
+
+    La versión nueva se arma aparte y entra de un solo movimiento: si algo falla a
+    medias, la anterior sigue donde estaba. Y si la anterior era una copia —quizá
+    editada a mano— queda como `init-brain.anterior`, por si hay que volver."""
     destino = base / "skills" / "init-brain"
     destino.parent.mkdir(parents=True, exist_ok=True)
+    nuevo = destino.with_name("init-brain.nuevo")
+    anterior = destino.with_name("init-brain.anterior")
+    borrar(nuevo)
 
-    if destino.is_symlink() or destino.exists():
-        (destino.unlink if destino.is_symlink() else lambda: shutil.rmtree(destino))()
-
+    modo = "copiado"
     if enlazar:
         try:
-            destino.symlink_to(ORIGEN, target_is_directory=True)
-            return "enlazado"
+            nuevo.symlink_to(ORIGEN, target_is_directory=True)
+            modo = "enlazado"
         except OSError:
             pass  # Windows sin modo desarrollador: se copia y se avisa
+    if modo == "copiado":
+        shutil.copytree(ORIGEN, nuevo)
 
-    shutil.copytree(ORIGEN, destino)
-    return "copiado"
+    habia = destino.is_symlink() or destino.exists()
+    if habia:
+        borrar(anterior)
+        destino.rename(anterior)
+    try:
+        nuevo.rename(destino)
+    except Exception:
+        if habia:
+            anterior.rename(destino)
+        raise
+    if habia and anterior.is_symlink():
+        anterior.unlink()  # un enlace no guarda nada propio; una copia sí, y se queda de respaldo
+    return modo
 
 
 def main() -> int:
@@ -60,6 +85,9 @@ def main() -> int:
         encontrados.append(nombre)
         aviso = " (symlink no permitido, se copió)" if enlazar and modo == "copiado" else ""
         print(f"  {nombre:<12} -> {base / 'skills' / 'init-brain'}{aviso}")
+        anterior = base / "skills" / "init-brain.anterior"
+        if anterior.exists():
+            print(f"  {'':<12}    la versión anterior quedó en {anterior}; bórrala cuando no la necesites")
 
     if not encontrados:
         print(

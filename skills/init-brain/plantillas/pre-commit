@@ -1,0 +1,4 @@
+#!/bin/sh
+# Hook pre-commit del vault: nada entra si rompe una invariante del cerebro.
+# Va en .githooks/pre-commit y se activa con: git config core.hooksPath .githooks
+exec python3 "$(git rev-parse --show-toplevel)/check.py"

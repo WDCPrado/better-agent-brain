@@ -264,7 +264,11 @@ crece el cerebro, que es la única razón por la que se puede cargar entero en c
 - **Nunca dupliques** lo que ya dicen el README, el archivo de reglas del repo o el diff. Si se
   deduce leyendo el código, no va.
 - **Ninguna nota nace huérfana.** En el mismo turno que la escribes: dale su `contexto` y
-  agrégale su línea en el índice de ese contexto.
+  agrégale su línea en el índice de ese contexto. `check.py` lo verifica en los dos sentidos.
+- **Agregar es también corregir.** Al sumar un hecho a un contexto, relee la nota entera y
+  corrige lo que ese hecho deja falso.
+- **Una nota que crece como bitácora se divide.** Pasadas las 80 líneas ya no es un hecho: la
+  decisión se queda con el porqué, los hechos van a su contexto y lo reusable a `tecnicas/`.
 - Enlaza con `[[wikilinks]]` **por pertenencia, nunca por comparación**. Un enlace es una arista
   del grafo: "a diferencia de X" dibuja una relación que no existe. En ese caso escribe el
   nombre sin corchetes.
@@ -272,8 +276,9 @@ crece el cerebro, que es la única razón por la que se puede cargar entero en c
   `check.sh` lo lista como pendiente, no como error.
 - **Lo que ordena es la fecha, no un campo de estado.** En el índice de cada contexto las
   decisiones van de la más reciente a la más antigua, con la fecha a la vista, y la de arriba
-  manda. Cuando una nota reemplaza a otra lleva `deriva-de: "[[la-vieja]]"` y la vieja gana una
-  línea arriba diciendo qué cambió y cuándo.
+  manda —solo dentro del índice de un mismo contexto; una hipótesis no entra al vault hasta que
+  sea decisión—. Cuando una nota reemplaza a otra lleva `deriva-de: "[[la-vieja]]"` y la vieja
+  gana una línea arriba diciendo qué cambió y cuándo.
 - Convierte las fechas relativas a absolutas: "el mes pasado" no significa nada en dos años.
 
 ---
@@ -314,8 +319,11 @@ Si es escritor, las tres:
 
 1. **Las carpetas y el check.** Copia `check.py` de `plantillas/` a la raíz del vault (y
    `check.sh`, que es solo un atajo para Unix). Se corre con `python3 check.py` en cualquier
-   sistema. Verifica tres cosas: que toda nota sea alcanzable desde `MEMORY.md` siguiendo
-   enlaces, que ningún nombre esté repetido, y qué enlaces quedan pendientes de escribir.
+   sistema. Rompe si una nota no cuelga de `MEMORY.md`, si un nombre se repite, si el
+   frontmatter no cuadra, si un contexto declarado no indexa a la nota o si un `deriva-de` no
+   tiene vuelta; avisa los enlaces pendientes y las notas de más de 80 líneas fuera de
+   `contextos/`. Es lo que el código garantiza; que una nota sea verdad o siga vigente lo
+   pone quien la escribe.
 
 2. **Los hooks.** Copia `aviso.py` al vault —y `indice.py` si hace falta, ver abajo— y
    regístralos con la ruta completa y el intérprete del sistema:
@@ -361,8 +369,10 @@ publicarlo o dejarlo solo en disco es decisión de quien lo escribe, no de este 
 y el `check.sh` funcionan igual en los tres casos.
 
 Al terminar, menciónalo **una vez**, como opción: un vault en git deja ver cómo evolucionó lo
-que se sabía, y sobrevive a que se muera el disco. Si la persona dice que sí, `git init` y ya;
-la disciplina de commitear y publicar es suya y se anota en `forma-de-trabajo/`, no acá.
+que se sabía, y sobrevive a que se muera el disco. Si la persona dice que sí, `git init`, copia
+`plantillas/pre-commit` a `.githooks/pre-commit` y corre `git config core.hooksPath .githooks`:
+así el check corre solo en cada commit y nada que lo rompa entra al historial. La disciplina de
+commitear y publicar es suya y se anota en `forma-de-trabajo/`, no acá.
 
 ---
 

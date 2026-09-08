@@ -55,6 +55,14 @@ sala de espera y no el destino.
 frontmatter y agrégale su línea en el índice de ese contexto. Del índice global solo cuelgan los
 contextos raíz y lo transversal.
 
+**Agregar es también corregir.** Al sumar un hecho a un contexto, relee la nota entera y borra o
+corrige lo que ese hecho deja falso: dos párrafos que se contradicen en la misma nota son peor
+que ninguno.
+
+**Una nota que crece como bitácora se divide.** Si la editas por tercera vez en el día o pasa de
+80 líneas, ya no es un hecho: la decisión se queda con el porqué, los hechos van a su contexto y
+lo reusable a `tecnicas/`.
+
 ### El índice
 
 `MEMORY.md` es el mapa: la persona, sus organizaciones, los terceros de los que depende y lo
@@ -85,12 +93,16 @@ tags: [cache]
 **Lo que ordena es la fecha, no un campo de estado.** En el índice de cada contexto las
 decisiones van de la más reciente a la más antigua, con la fecha a la vista, y la de arriba
 manda. Cuando una nota reemplaza a otra lleva `deriva-de: "[[la-vieja]]"`, y la vieja gana una
-línea arriba diciendo qué cambió y en qué fecha.
+línea arriba diciendo qué cambió y en qué fecha. **Manda solo dentro del índice de un mismo
+contexto**: una nota reciente de otro contexto no reemplaza nada, y una hipótesis no entra al
+vault —se escribe cuando es decisión.
 
 ### Al cerrar
 
-Corre `./check.sh`, que verifica tres cosas: que toda nota sea alcanzable desde `MEMORY.md`
-siguiendo enlaces, que ningún nombre esté repetido y qué enlaces quedan pendientes de escribir.
+Corre `./check.sh`. Rompe si una nota no cuelga de `MEMORY.md`, si un nombre se repite, si el
+frontmatter no cuadra, si un contexto declarado no la indexa o si un `deriva-de` no tiene vuelta;
+avisa los enlaces pendientes de escribir y las notas demasiado largas fuera de `contextos/`.
+Con el vault en git, el hook `pre-commit` lo corre solo y nada que lo rompa entra al historial.
 
 Qué se hace después con el vault —versionarlo, publicarlo, dejarlo en disco— lo decide quien lo
 escribe. Si hay una regla al respecto, va en `forma-de-trabajo/` y manda por sobre esto.
