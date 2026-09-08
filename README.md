@@ -32,14 +32,26 @@ entra completo en el contexto de cada sesión.
 La apuesta es que **destilar gana a grabar**. Una nota escrita a mano con el hecho que importa
 vale más que la conversación entera donde ese hecho apareció, por tres razones concretas:
 
-- **La recuperación no falla.** Mientras el índice quepa en el contexto —y cabe hasta varios
-  cientos de notas— el agente lo tiene entero, siempre. No hay top-k que se salte el resultado
-  #7 sin avisar.
+- **El camino a la memoria es explícito.** Mientras el índice quepa en el contexto —y cabe
+  hasta varios cientos de notas— el agente lo tiene entero, siempre. No hay top-k que se salte
+  el resultado #7 sin avisar. Que después baje por la rama correcta depende de la descripción de
+  cada nota, no de un ranking.
 - **Lo que se guarda es lo que resultó cierto**, no lo que se dijo. Una transcripción devuelve
   con la misma confianza la conversación donde te equivocaste y la conclusión final; acá las
   notas se fechan y se reemplazan, y la de arriba manda.
 - **Lo puedes leer tú.** Es markdown en tu disco. El grafo es tuyo, y si mañana cambias de
   agente —o abandonas este proyecto— tus notas siguen siendo tus notas.
+
+## Qué garantiza el código y qué no
+
+`check.py` hace comprobables las condiciones necesarias: que toda nota cuelgue del índice, que
+ningún nombre se repita, que el frontmatter sea coherente, que cada contexto que una nota declara
+la indexe y que un reemplazo enlace en los dos sentidos. Con el vault en git, un hook
+`pre-commit` lo corre solo, así que nada que rompa eso entra al historial.
+
+Lo que no comprueba nadie más que quien escribe: que una nota sea verdad, que siga vigente y que
+el agente elija bien dónde buscar. El sistema hace el recorrido explícito y verificable, no
+infalible.
 
 ## Qué necesitas
 
