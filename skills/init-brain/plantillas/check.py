@@ -17,8 +17,9 @@ Rompen (exit 1):
 Avisan:
 6. Los enlaces a notas que no existen se listan como pendientes: marcan algo que
    falta escribir.
-7. Una nota de más de LARGO líneas huele a bitácora: la decisión se queda con el
-   porqué, los hechos van a su contexto y lo reusable a `tecnicas/`.
+7. Una nota de más de LARGO líneas fuera de `contextos/` huele a bitácora: la decisión
+   se queda con el porqué, los hechos van a su contexto y lo reusable a `tecnicas/`.
+   Un contexto acumula hechos por diseño; cuando crece, lo que nace es un subcontexto.
 
 Esto es lo que el código garantiza. Que una nota diga la verdad, o siga vigente, no
 lo comprueba nadie más que quien la escribe.
@@ -97,7 +98,7 @@ for nombre in sorted(notas):
     for vieja in sorted(fm["deriva-de"]):
         if vieja in notas and nombre not in enlaces_en(textos[vieja]):
             error(f"{ruta}: deriva de [[{vieja}]] pero la vieja no enlaza a la nueva")
-    if cuerpo.count("\n") > LARGO:
+    if ruta.parts[0] != "contextos" and cuerpo.count("\n") > LARGO:
         print(f"aviso: {ruta} pasa de {LARGO} líneas; huele a bitácora, considera dividirla")
 
 # 1. alcanzabilidad desde el índice

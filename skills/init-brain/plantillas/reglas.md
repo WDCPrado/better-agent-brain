@@ -101,7 +101,8 @@ vault —se escribe cuando es decisión.
 
 Corre `./check.sh`. Rompe si una nota no cuelga de `MEMORY.md`, si un nombre se repite, si el
 frontmatter no cuadra, si un contexto declarado no la indexa o si un `deriva-de` no tiene vuelta;
-avisa los enlaces pendientes de escribir y las notas demasiado largas. Con el vault en git, el
+avisa los enlaces pendientes de escribir y las notas demasiado largas fuera de `contextos/`. Con
+el vault en git, el
 hook `pre-commit` lo corre solo y nada que lo rompa entra al historial.
 
 Qué se hace después con el vault —versionarlo, publicarlo, dejarlo en disco— lo decide quien lo
