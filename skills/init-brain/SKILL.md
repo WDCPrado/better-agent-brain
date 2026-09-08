@@ -322,8 +322,8 @@ Si es escritor, las tres:
    sistema. Rompe si una nota no cuelga de `MEMORY.md`, si un nombre se repite, si el
    frontmatter no cuadra, si un contexto declarado no indexa a la nota o si un `deriva-de` no
    tiene vuelta; avisa los enlaces pendientes y las notas de más de 80 líneas fuera de
-   `contextos/`. Es lo que el
-   código garantiza; que una nota sea verdad o siga vigente lo pone quien la escribe.
+   `contextos/`. Es lo que el código garantiza; que una nota sea verdad o siga vigente lo
+   pone quien la escribe.
 
 2. **Los hooks.** Copia `aviso.py` al vault —y `indice.py` si hace falta, ver abajo— y
    regístralos con la ruta completa y el intérprete del sistema:
