@@ -19,16 +19,24 @@ Avisan:
    falta escribir.
 7. Una nota de más de LARGO líneas fuera de `contextos/` huele a bitácora: la decisión
    se queda con el porqué, los hechos van a su contexto y lo reusable a `tecnicas/`.
-   Un contexto acumula hechos por diseño; cuando crece, lo que nace es un subcontexto.
+   Un contexto acumula hechos por diseño, así que su límite es LARGO_CONTEXTO; pasado
+   ese, lo que nace es un subcontexto.
+8. Una técnica o forma de trabajo de más de EDAD_DIAS días que ninguna nota enlaza salvo
+   su propio índice es candidata a borrar. Se lista; borrarla es de quien escribe, porque
+   el check no sabe si sigue siendo cierta. `BRAIN_EDAD_DIAS` cambia el umbral.
 
 Esto es lo que el código garantiza. Que una nota diga la verdad, o siga vigente, no
 lo comprueba nadie más que quien la escribe.
 """
-import re, sys
+import os, re, sys
+from datetime import date, timedelta
 from pathlib import Path
 from collections import deque
 
 LARGO = 80
+LARGO_CONTEXTO = 120
+EDAD_DIAS = int(os.environ.get("BRAIN_EDAD_DIAS", 365))
+VIEJAS_EN = ("tecnicas", "forma-de-trabajo")
 raiz = Path(sys.argv[1]).resolve() if len(sys.argv) > 1 else Path(__file__).resolve().parent
 indice = raiz / "MEMORY.md"
 
@@ -98,8 +106,9 @@ for nombre in sorted(notas):
     for vieja in sorted(fm["deriva-de"]):
         if vieja in notas and nombre not in enlaces_en(textos[vieja]):
             error(f"{ruta}: deriva de [[{vieja}]] pero la vieja no enlaza a la nueva")
-    if ruta.parts[0] != "contextos" and cuerpo.count("\n") > LARGO:
-        print(f"aviso: {ruta} pasa de {LARGO} líneas; huele a bitácora, considera dividirla")
+    largo = LARGO_CONTEXTO if ruta.parts[0] == "contextos" else LARGO
+    if cuerpo.count("\n") > largo:
+        print(f"aviso: {ruta} pasa de {largo} líneas; huele a bitácora, considera dividirla")
 
 # 1. alcanzabilidad desde el índice
 vistos, cola, rotos = set(), deque(indice_enlaces), set()
@@ -119,6 +128,16 @@ for nombre in sorted(set(notas) - vistos):
 # 6. pendientes, informativos
 for nombre in sorted(rotos):
     print(f"pendiente por escribir: [[{nombre}]]")
+
+# 8. viejas que nadie enlaza salvo su índice
+limite = (date.today() - timedelta(days=EDAD_DIAS)).isoformat()
+for nombre in sorted(notas):
+    ruta, (fm, _) = notas[nombre][0], frontmatter(textos[nombre])
+    if ruta.parts[0] not in VIEJAS_EN or not fm or not fm["fecha"] or fm["fecha"] > limite:
+        continue
+    quien = {n for n in notas if n != nombre and nombre in enlaces_en(textos[n])} - fm["contexto"]
+    if not quien:
+        print(f"aviso: {ruta} tiene más de {EDAD_DIAS} días y solo la enlaza su índice; candidata a borrar")
 
 print(f"{len(notas)} notas, {len(vistos & set(notas))} alcanzables")
 sys.exit(1 if fallo else 0)

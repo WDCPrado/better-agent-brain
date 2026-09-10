@@ -21,12 +21,20 @@ responder**: no es opcional.)
 Es el único almacén: no crees notas de contexto dentro de los repos ni uses el directorio de
 memoria por proyecto de Claude Code.
 
-**Antes de trabajar**, si el índice muestra algo relacionado, léelo y sigue sus enlaces. Si no,
-busca igual: `rg -il '<repo-o-tema>' RUTA_DEL_VAULT` (o `grep -ril` si no tienes ripgrep). Para todo lo de un contexto, busca su
-wikilink: `rg -l '\[\[nombre-del-contexto\]\]'`.
+**Antes de trabajar, lee el contexto del repo. No es opcional.** En el primer turno en un
+repo, sea tarea o pregunta —también en un worktree, que es el mismo repo—, abre su nota de `contextos/`, la que
+lleva `repo:` con su ruta (`rg -l 'repo: .*<nombre>' RUTA_DEL_VAULT`, o `grep -rl` si no tienes
+ripgrep), y sigue los enlaces que toquen la tarea. Si el tema no es un repo, busca igual:
+`rg -il '<tema>' RUTA_DEL_VAULT`; para todo lo de un contexto, su wikilink:
+`rg -l '\[\[nombre-del-contexto\]\]'`. Di en una línea qué leíste, o que no había nada. Una
+memoria que no se relee no es memoria: es un diario.
 
-**Al terminar**, escribe lo que no se deduce del código ni del historial de git. Una nota = un
-hecho. Nunca dupliques lo que ya dice el README, el archivo de reglas del repo o el diff.
+**Al terminar, escribe poco y solo lo que va a volver a leerse:** lo que no se deduce del
+código ni del historial de git, nunca lo que ya dice el README, el archivo de reglas del repo o
+el diff. Una nota = un hecho. **Una técnica nace la segunda vez que hace falta, no la primera**:
+la primera vez va en una línea de la respuesta; si vuelve a aparecer, es reusable. **Un
+contexto dice cómo funciona hoy, no qué pasó cada día**: no le agregues párrafos fechados por
+tarea; el porqué va a `decisiones/`, lo que costó y es reusable a `tecnicas/`, y el resto no va.
 
 ### Las cuatro carpetas
 
@@ -60,8 +68,9 @@ corrige lo que ese hecho deja falso: dos párrafos que se contradicen en la mism
 que ninguno.
 
 **Una nota que crece como bitácora se divide.** Si la editas por tercera vez en el día o pasa de
-80 líneas, ya no es un hecho: la decisión se queda con el porqué, los hechos van a su contexto y
-lo reusable a `tecnicas/`.
+80 líneas —120 en `contextos/`, que acumulan hechos por diseño—, ya no es un hecho: la decisión
+se queda con el porqué, los hechos van a su contexto —o a un subcontexto nuevo— y lo reusable a
+`tecnicas/`.
 
 ### El índice
 
@@ -101,8 +110,9 @@ vault —se escribe cuando es decisión.
 
 Corre `./check.sh`. Rompe si una nota no cuelga de `MEMORY.md`, si un nombre se repite, si el
 frontmatter no cuadra, si un contexto declarado no la indexa o si un `deriva-de` no tiene vuelta;
-avisa los enlaces pendientes de escribir y las notas demasiado largas fuera de `contextos/`.
-Con el vault en git, el hook `pre-commit` lo corre solo y nada que lo rompa entra al historial.
+avisa los enlaces pendientes de escribir, las notas demasiado largas y las técnicas y formas de
+trabajo de más de un año que nadie enlaza salvo su índice: candidatas a borrar, y las borra la
+persona, no el check (`BRAIN_EDAD_DIAS` cambia el umbral). Con el vault en git, el hook `pre-commit` lo corre solo y nada que lo rompa entra al historial.
 
 Qué se hace después con el vault —versionarlo, publicarlo, dejarlo en disco— lo decide quien lo
 escribe. Si hay una regla al respecto, va en `forma-de-trabajo/` y manda por sobre esto.
