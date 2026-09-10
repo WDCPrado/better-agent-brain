@@ -21,8 +21,8 @@ responder**: no es opcional.)
 Es el único almacén: no crees notas de contexto dentro de los repos ni uses el directorio de
 memoria por proyecto de Claude Code.
 
-**Antes de trabajar, lee el contexto del repo. No es opcional.** En el primer turno de trabajo
-en un repo —también en un worktree, que es el mismo repo— abre su nota de `contextos/`, la que
+**Antes de trabajar, lee el contexto del repo. No es opcional.** En el primer turno en un
+repo, sea tarea o pregunta —también en un worktree, que es el mismo repo—, abre su nota de `contextos/`, la que
 lleva `repo:` con su ruta (`rg -l 'repo: .*<nombre>' RUTA_DEL_VAULT`, o `grep -rl` si no tienes
 ripgrep), y sigue los enlaces que toquen la tarea. Si el tema no es un repo, busca igual:
 `rg -il '<tema>' RUTA_DEL_VAULT`; para todo lo de un contexto, su wikilink:
