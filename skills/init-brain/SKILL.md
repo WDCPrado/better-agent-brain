@@ -267,8 +267,11 @@ crece el cerebro, que es la única razón por la que se puede cargar entero en c
   agrégale su línea en el índice de ese contexto. `check.py` lo verifica en los dos sentidos.
 - **Agregar es también corregir.** Al sumar un hecho a un contexto, relee la nota entera y
   corrige lo que ese hecho deja falso.
-- **Una nota que crece como bitácora se divide.** Pasadas las 80 líneas ya no es un hecho: la
-  decisión se queda con el porqué, los hechos van a su contexto y lo reusable a `tecnicas/`.
+- **Una nota que crece como bitácora se divide.** Pasadas las 80 líneas —120 en `contextos/`—
+  ya no es un hecho: la decisión se queda con el porqué, los hechos van a su contexto o a un
+  subcontexto nuevo, y lo reusable a `tecnicas/`.
+- **Una técnica nace la segunda vez que hace falta**, no la primera. Y un contexto dice cómo
+  funciona la cosa hoy, no qué pasó cada día: sin párrafos fechados por tarea.
 - Enlaza con `[[wikilinks]]` **por pertenencia, nunca por comparación**. Un enlace es una arista
   del grafo: "a diferencia de X" dibuja una relación que no existe. En ese caso escribe el
   nombre sin corchetes.
@@ -321,9 +324,11 @@ Si es escritor, las tres:
    `check.sh`, que es solo un atajo para Unix). Se corre con `python3 check.py` en cualquier
    sistema. Rompe si una nota no cuelga de `MEMORY.md`, si un nombre se repite, si el
    frontmatter no cuadra, si un contexto declarado no indexa a la nota o si un `deriva-de` no
-   tiene vuelta; avisa los enlaces pendientes y las notas de más de 80 líneas fuera de
-   `contextos/`. Es lo que el código garantiza; que una nota sea verdad o siga vigente lo
-   pone quien la escribe.
+   tiene vuelta; avisa los enlaces pendientes, las notas de más de 80 líneas (120 en
+   `contextos/`) y las técnicas y formas de trabajo de más de un año que nadie enlaza salvo su
+   índice, candidatas a borrar (`BRAIN_EDAD_DIAS` cambia el umbral; borrar es de la persona).
+   Es lo que el código garantiza; que una nota sea verdad o siga vigente lo pone quien la
+   escribe.
 
 2. **Los hooks.** Copia `aviso.py` al vault —y `indice.py` si hace falta, ver abajo— y
    regístralos con la ruta completa y el intérprete del sistema:
