@@ -22,8 +22,11 @@ como texto. Si en tu agente el índice no aparece arriba, un hook `SessionStart`
 es opcional.)
 
 El índice tiene cuatro secciones —la persona, las organizaciones donde trabaja, los terceros que
-usa y lo transversal— y cada contexto indexa a sus hijos. Si algo del índice se relaciona con lo
-que estás haciendo, ábrelo y sigue sus enlaces. Si no aparece nada, busca igual:
+usa y lo transversal— y cada contexto indexa a sus hijos. **Antes de trabajar o responder sobre un
+repo lee su contexto; no es opcional.** Es la nota de `contextos/` que lleva `repo:` con su ruta
+(`rg -l 'repo: .*<nombre>' RUTA_DEL_VAULT`), también cuando estás en un worktree, que es el mismo
+repo; sigue los enlaces que toquen la tarea y di en una línea qué leíste, o que no había nada. Si
+el tema no es un repo, busca igual:
 
 ```
 rg -il '<repo-o-tema>' RUTA_DEL_VAULT          # o grep -ril si no tienes ripgrep

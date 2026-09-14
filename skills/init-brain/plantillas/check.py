@@ -24,14 +24,16 @@ Avisan:
 8. Una técnica o forma de trabajo de más de EDAD_DIAS días que ninguna nota enlaza salvo
    su propio índice es candidata a borrar. Se lista; borrarla es de quien escribe, porque
    el check no sabe si sigue siendo cierta. `BRAIN_EDAD_DIAS` cambia el umbral.
+9. Con el vault en git, una nota con tres o más commits en el día es una bitácora: se
+   está escribiendo lo que pasó, no cómo funciona. La regla dice dividirla; el check avisa.
 
 Esto es lo que el código garantiza. Que una nota diga la verdad, o siga vigente, no
 lo comprueba nadie más que quien la escribe.
 """
-import os, re, sys
+import os, re, shutil, subprocess, sys
+from collections import Counter, deque
 from datetime import date, timedelta
 from pathlib import Path
-from collections import deque
 
 LARGO = 80
 LARGO_CONTEXTO = 120
@@ -138,6 +140,14 @@ for nombre in sorted(notas):
     quien = {n for n in notas if n != nombre and nombre in enlaces_en(textos[n])} - fm["contexto"]
     if not quien:
         print(f"aviso: {ruta} tiene más de {EDAD_DIAS} días y solo la enlaza su índice; candidata a borrar")
+
+# 9. bitácora del día: solo si el vault es un repo git
+if shutil.which("git") and (raiz / ".git").exists():
+    hoy = subprocess.run(["git", "-C", str(raiz), "log", f"--since={date.today()}T00:00", "--format=", "--name-only"],
+                         capture_output=True, text=True).stdout.split()
+    for ruta, n in sorted(Counter(r for r in hoy if r.endswith(".md") and r != "MEMORY.md").items()):
+        if n >= 3:
+            print(f"aviso: {ruta} lleva {n} commits hoy; es una bitácora, divídela")
 
 print(f"{len(notas)} notas, {len(vistos & set(notas))} alcanzables")
 sys.exit(1 if fallo else 0)

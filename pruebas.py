@@ -112,6 +112,24 @@ def prueba_tecnica_vieja():
             del os.environ["BRAIN_EDAD_DIAS"]
 
 
+def prueba_bitacora_del_dia():
+    """Tres commits en el día sobre la misma nota es escribir lo que pasó, no cómo funciona."""
+    if not shutil.which("git"):
+        return
+    with tempfile.TemporaryDirectory() as tmp:
+        raiz = vault(pathlib.Path(tmp), BASE)
+        git = lambda *a: subprocess.run(["git", "-C", tmp, *a], check=True, capture_output=True,
+                                        env={**os.environ, "GIT_AUTHOR_NAME": "p", "GIT_AUTHOR_EMAIL": "p@p",
+                                             "GIT_COMMITTER_NAME": "p", "GIT_COMMITTER_EMAIL": "p@p"})
+        git("init", "-q")
+        for i in range(3):
+            (raiz / "decisiones/decision.md").write_text(nota("decision", ["org"]) + f"v{i}\n")
+            git("add", "."); git("commit", "-qm", f"v{i}")
+        codigo, salida = check(raiz)
+        assert codigo == 0 and "decision.md lleva 3 commits hoy" in salida, salida
+        assert "MEMORY.md lleva" not in salida
+
+
 def cargar_instalador():
     spec = importlib.util.spec_from_file_location("instalar", REPO / "instalar.py")
     mod = importlib.util.module_from_spec(spec)

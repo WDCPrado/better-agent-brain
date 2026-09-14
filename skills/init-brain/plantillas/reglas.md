@@ -112,7 +112,9 @@ Corre `./check.sh`. Rompe si una nota no cuelga de `MEMORY.md`, si un nombre se 
 frontmatter no cuadra, si un contexto declarado no la indexa o si un `deriva-de` no tiene vuelta;
 avisa los enlaces pendientes de escribir, las notas demasiado largas y las técnicas y formas de
 trabajo de más de un año que nadie enlaza salvo su índice: candidatas a borrar, y las borra la
-persona, no el check (`BRAIN_EDAD_DIAS` cambia el umbral). Con el vault en git, el hook `pre-commit` lo corre solo y nada que lo rompa entra al historial.
+persona, no el check (`BRAIN_EDAD_DIAS` cambia el umbral). Con el vault en git, el hook `pre-commit`
+lo corre solo y nada que lo rompa entra al historial, y el check avisa además la nota que lleva
+tres commits en el día: es una bitácora, y se divide antes de seguir escribiéndole.
 
 Qué se hace después con el vault —versionarlo, publicarlo, dejarlo en disco— lo decide quien lo
 escribe. Si hay una regla al respecto, va en `forma-de-trabajo/` y manda por sobre esto.

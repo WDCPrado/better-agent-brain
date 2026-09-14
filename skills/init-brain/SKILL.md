@@ -327,7 +327,8 @@ Si es escritor, las tres:
    tiene vuelta; avisa los enlaces pendientes, las notas de más de 80 líneas (120 en
    `contextos/`) y las técnicas y formas de trabajo de más de un año que nadie enlaza salvo su
    índice, candidatas a borrar (`BRAIN_EDAD_DIAS` cambia el umbral; borrar es de la persona).
-   Es lo que el código garantiza; que una nota sea verdad o siga vigente lo pone quien la
+   Si el vault es un repo git, avisa también la nota con tres o más commits en el día: una
+   bitácora. Es lo que el código garantiza; que una nota sea verdad o siga vigente lo pone quien la
    escribe.
 
 2. **Los hooks.** Copia `aviso.py` al vault —y `indice.py` si hace falta, ver abajo— y
