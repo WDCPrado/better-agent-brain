@@ -83,6 +83,53 @@ def prueba_frontmatter_y_tamano():
         assert codigo == 1 and "no es AAAA-MM-DD" in salida and "huele a bitácora" in salida, salida
 
 
+def prueba_contexto_largo():
+    """Un contexto acumula hechos por diseño, pero 322 líneas en 4 días es una bitácora."""
+    with tempfile.TemporaryDirectory() as tmp:
+        notas = dict(BASE)
+        notas["contextos/org/repo/repo.md"] += "x\n" * 100
+        codigo, salida = check(vault(pathlib.Path(tmp), notas))
+        assert codigo == 0 and "huele a bitácora" not in salida, salida
+        notas["contextos/org/repo/repo.md"] += "x\n" * 30
+        codigo, salida = check(vault(pathlib.Path(tmp), notas))
+        assert codigo == 0 and "repo.md pasa de 120" in salida, salida
+
+
+def prueba_tecnica_vieja():
+    """Una técnica de más de un año que solo enlaza su índice se lista; una enlazada, no."""
+    with tempfile.TemporaryDirectory() as tmp:
+        notas = dict(BASE)
+        notas["tecnicas/truco.md"] = nota("truco", ["repo"])          # fecha 2026-01-01
+        notas["contextos/org/repo/repo.md"] += "- [[truco]]\n"
+        raiz = vault(pathlib.Path(tmp), notas)
+        assert "candidata a borrar" not in check(raiz)[1]
+        os.environ["BRAIN_EDAD_DIAS"] = "1"
+        try:
+            assert "truco.md tiene más de 1 días" in check(raiz)[1]
+            notas["decisiones/decision.md"] += "\nusa [[truco]]\n"
+            assert "candidata a borrar" not in check(vault(raiz, notas))[1]
+        finally:
+            del os.environ["BRAIN_EDAD_DIAS"]
+
+
+def prueba_bitacora_del_dia():
+    """Tres commits en el día sobre la misma nota es escribir lo que pasó, no cómo funciona."""
+    if not shutil.which("git"):
+        return
+    with tempfile.TemporaryDirectory() as tmp:
+        raiz = vault(pathlib.Path(tmp), BASE)
+        git = lambda *a: subprocess.run(["git", "-C", tmp, *a], check=True, capture_output=True,
+                                        env={**os.environ, "GIT_AUTHOR_NAME": "p", "GIT_AUTHOR_EMAIL": "p@p",
+                                             "GIT_COMMITTER_NAME": "p", "GIT_COMMITTER_EMAIL": "p@p"})
+        git("init", "-q")
+        for i in range(3):
+            (raiz / "decisiones/decision.md").write_text(nota("decision", ["org"]) + f"v{i}\n")
+            git("add", "."); git("commit", "-qm", f"v{i}")
+        codigo, salida = check(raiz)
+        assert codigo == 0 and "decision.md lleva 3 commits hoy" in salida, salida
+        assert "MEMORY.md lleva" not in salida
+
+
 def cargar_instalador():
     spec = importlib.util.spec_from_file_location("instalar", REPO / "instalar.py")
     mod = importlib.util.module_from_spec(spec)
